@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>assets/ant.ico</file>
+    </qresource>
+</RCC>
