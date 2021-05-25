@@ -13,7 +13,7 @@ environnement::environnement(Coord coord,QWidget *parent ):
     ui(new Ui::environnement)
 {
     ui->setupUi(this);
-
+    this->resize(coord.x, coord.y);
     //layout de la fenêtre
     this->setLayout(new QVBoxLayout);
     //graphicView qui contient graphic scene
