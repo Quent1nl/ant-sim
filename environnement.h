@@ -3,10 +3,11 @@
 
 #include <QWidget>
 #include <QtWidgets>
-#include <map>
 #include <QGraphicsView>
-#include <mainwindow.h>//pour le coord, à enlever lorsque l'on aura une classe coord
+#include <iostream>
 
+#include <mainwindow.h>//pour le coord, à enlever lorsque l'on aura une classe coord
+#include <cellule.h>
 namespace Ui {
 class environnement;
 }
@@ -21,11 +22,13 @@ public:
     explicit environnement(Coord coord, QWidget *parent = nullptr);
     ~environnement();
 
-    QGraphicsView *view; //verifier si le pointer doit être delete
-    QGraphicsScene *scene;
+    void showMap();
 
 private:
     Ui::environnement *ui;
+    QGraphicsView *view; //verifier si le pointer doit être delete
+    QGraphicsScene *scene;
+    std::map<Coord, Cellule*> mapCellule; //map each cells to a coord
 };
 
 #endif // ENVIRONNEMENT_H
