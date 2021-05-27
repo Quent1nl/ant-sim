@@ -1,5 +1,8 @@
 <RCC>
-    <qresource prefix="/icon">
+    <qresource prefix="/">
         <file>assets/ant.ico</file>
+        <file>assets/cobblestone.png</file>
+        <file>assets/dirt.png</file>
+        <file>assets/green.png</file>
     </qresource>
 </RCC>

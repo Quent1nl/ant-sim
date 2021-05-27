@@ -4,7 +4,7 @@
 #include <QObject>
 
 struct Coord{
-    int x=1000, y=1000, id = 0;
+    int x=10, y=10, id = 0;
     Coord(){};
     Coord(int x, int y, int id) : x(x), y(y), id(id) {};
 };

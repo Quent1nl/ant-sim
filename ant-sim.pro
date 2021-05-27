@@ -12,12 +12,14 @@ SOURCES += \
     cellule.cpp \
     environnement.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    obstacle.cpp
 
 HEADERS += \
     cellule.h \
     environnement.h \
-    mainwindow.h
+    mainwindow.h \
+    obstacle.h
 
 FORMS += \
     environnement.ui \

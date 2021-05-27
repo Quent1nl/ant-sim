@@ -13,15 +13,9 @@ environnement::environnement(Coord coord,QWidget *parent ):
     ui(new Ui::environnement)
 {
     ui->setupUi(this);
-    this->resize(coord.x, coord.y);
+    this->resize(coord.x *100 + 230, coord.y*100 + 230);
 
-    //map each cells to a coord
-    int id = 0;
-    for (int x=0; x<=coord.x; x+=50){
-        for (int y=0; y<=coord.y; y+=50){
-            this->mapCellule.insert(std::make_pair(Coord(x, y, id++), new Cellule()));
-        }
-    }
+
 
 
     //layout de la fenêtre
@@ -33,15 +27,56 @@ environnement::environnement(Coord coord,QWidget *parent ):
     scene = new QGraphicsScene;
     view->setScene(scene);
 
-    // Add the vertical lines first, paint them red
-    for (int x=0; x<=coord.x; x+=50)
-        scene->addLine(x,0,x,coord.x, QPen(Qt::black));
+    //map each cells to a coord
+    int id = 0;
+    for (int x=0; x<coord.x*100; x+=100){
+        for (int y=0; y<coord.y*100; y+=100){
+            this->mapCellule.insert(std::make_pair(Coord(x, y, id++), new Cellule()));
+        }
+    }
 
-    // Now add the horizontal lines, paint them green
-    for (int y=0; y<=coord.y; y+=50)
-        scene->addLine(0,y,coord.y,y, QPen(Qt::black));
+    int i = 0;
+    for (const auto &p : this->mapCellule)
+    {
 
-    this->showMap();
+        QGraphicsTextItem *textscene = scene->addText(QString::number(i++));
+        textscene->setPos(p.first.x, p.first.y);
+    }
+
+    //border
+    QPixmap Cobble = QPixmap(":/assets/cobblestone.png");
+    for (int x=-100; x<=coord.x*100; x+=100){ //horizontal border
+
+        Obstacle* border = new Obstacle(Cobble);
+        border->setScale(0.78);
+        border->setPos(x,-100);
+        scene->addItem(border);
+
+        Obstacle* border2 = new Obstacle(Cobble);
+        border2->setScale(0.78);
+        border2->setPos(x, coord.y * 100 );
+        scene->addItem(border2);
+    }
+    for (int y=-100; y<coord.y*100; y+=100){ //vertical border
+
+        Obstacle* border = new Obstacle(Cobble);
+        border->setScale(0.78);
+        border->setPos(-100, y);
+        scene->addItem(border);
+
+        Obstacle* border2 = new Obstacle(Cobble);
+        border2->setScale(0.78);
+        border2->setPos(coord.x*100, y);
+        scene->addItem(border2);
+    }
+
+
+
+
+
+    //delete border;
+
+    //this->showMap();
 
 }
 

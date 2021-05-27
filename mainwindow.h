@@ -21,9 +21,8 @@ public:
 private slots:
     void on_playButton_clicked();
 
-
 private:
     Ui::MainWindow *ui;
-    Coord coord = *new Coord();
+    Coord coord ;
 };
 #endif // MAINWINDOW_H
