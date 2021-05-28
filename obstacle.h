@@ -1,16 +1,16 @@
 #ifndef OBSTACLE_H
 #define OBSTACLE_H
 
-#include <QGraphicsPixmapItem>
+#include <cellule.h>
 
-class Obstacle : public QGraphicsPixmapItem
+class Obstacle : public Cellule
 {
     public:
     /*!
      * \brief Obstacle
      * \param pixmap, picture to display
      */
-    Obstacle(QPixmap pixmap) : QGraphicsPixmapItem(pixmap){}
+    Obstacle(QPixmap pixmap) : Cellule(pixmap){}
 
     virtual ~Obstacle(){}
 };

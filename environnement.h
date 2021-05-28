@@ -31,7 +31,11 @@ private:
     Ui::environnement *ui;
     QGraphicsView *view; //verifier si le pointer doit être delete
     QGraphicsScene *scene;
+
     std::map<Coord, Cellule*> mapCellule; //map each cells to a coord
+    std::map<Coord, Cellule*>::iterator cellIt;
+
+    std::map<Coord, Obstacle*> mapObstacle; //map each obstacle to a coord
 };
 
 #endif // ENVIRONNEMENT_H
