@@ -28,9 +28,21 @@ environnement::environnement(Coord coord,QWidget *parent ):
 
     //map each cells to a coord
     QPixmap dirt = QPixmap(":/assets/dirt.png");
+    //ant png
+    QPixmap oldAnt(":/assets/ant.png");
+    QPixmap ant = oldAnt.scaled(QSize(50,50),  Qt::KeepAspectRatio);
+    //change color of the ant
+    auto mask = ant.createMaskFromColor(QColor(0, 0, 0),Qt::MaskOutColor )  ;
+    QPainter p (&ant);
+    p.setPen(QColor(0, 0, 255));
+    p.drawPixmap(ant.rect(), mask, mask.rect());
+    p.end();
+
     int id = 0;
     for (int x=0; x<coord.x* caseSize; x+= caseSize){
         for (int y=0; y<coord.y* caseSize; y+= caseSize){
+            QPainter painter(&dirt);
+            painter.drawPixmap(x+50, y+40, ant);//add ant on cell png
             Cellule* cellule = new Cellule(dirt);
             this->mapCellule.insert(std::make_pair(Coord(x, y, ++id), cellule));
         }
@@ -39,6 +51,7 @@ environnement::environnement(Coord coord,QWidget *parent ):
     generateObstacle(coord);//bordure + obstacle
     generateFood(coord);//food
     generateFloor();//floor
+
 }
 
 

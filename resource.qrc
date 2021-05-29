@@ -6,5 +6,6 @@
         <file>assets/green.png</file>
         <file>assets/food.png</file>
         <file>assets/bedrock.png</file>
+        <file>assets/ant.png</file>
     </qresource>
 </RCC>

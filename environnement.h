@@ -6,6 +6,7 @@
 #include <QGraphicsView>
 #include <iostream>
 #include <string>
+#include <QPainter>
 
 #include <mainwindow.h>//pour le coord, à enlever lorsque l'on aura une classe coord
 #include <cellule.h>
