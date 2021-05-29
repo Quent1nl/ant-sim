@@ -7,14 +7,14 @@ environnement::environnement(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::environnement)
 {
-    ui->setupUi(this);
+    ui->setupUi(this); 
 }
 
 environnement::environnement(Coord coord,QWidget *parent ):
     QWidget(parent),
     ui(new Ui::environnement)
 {
-    ui->setupUi(this);
+    ui->setupUi(this);    
     this->resize(coord.x * caseSize + 230, coord.y* caseSize + 230);
 
     //layout de la fenêtre
@@ -22,35 +22,41 @@ environnement::environnement(Coord coord,QWidget *parent ):
     //graphicView qui contient graphic scene
     view = new QGraphicsView(this);
     this->layout()->addWidget(view);
+
     //graphic Scene, on y insère des widgets
     scene = new QGraphicsScene;
     view->setScene(scene);
 
+
+    this->coord = coord;
+
+
     //map each cells to a coord
     QPixmap dirt = QPixmap(":/assets/dirt.png");
-    //ant png
-    QPixmap oldAnt(":/assets/ant.png");
-    QPixmap ant = oldAnt.scaled(QSize(50,50),  Qt::KeepAspectRatio);
-    //change color of the ant
-    auto mask = ant.createMaskFromColor(QColor(0, 0, 0),Qt::MaskOutColor )  ;
-    QPainter p (&ant);
-    p.setPen(QColor(0, 0, 255));
-    p.drawPixmap(ant.rect(), mask, mask.rect());
-    p.end();
+//    //ant png
+//    QPixmap oldAnt(":/assets/ant.png");
+//    QPixmap ant = oldAnt.scaled(QSize(50,50),  Qt::KeepAspectRatio);
+//    //change color of the ant
+//    auto mask = ant.createMaskFromColor(QColor(0, 0, 0),Qt::MaskOutColor )  ;
+//    QPainter p (&ant);
+//    p.setPen(QColor(0, 0, 255));
+//    p.drawPixmap(ant.rect(), mask, mask.rect());
+//    p.end();
 
     int id = 0;
     for (int x=0; x<coord.x* caseSize; x+= caseSize){
         for (int y=0; y<coord.y* caseSize; y+= caseSize){
-            QPainter painter(&dirt);
-            painter.drawPixmap(x+50, y+40, ant);//add ant on cell png
+            //QPainter painter(&dirt);
+            //painter.drawPixmap(x+50, y+40, ant);//add ant on cell png
             Cellule* cellule = new Cellule(dirt);
             this->mapCellDispo.insert(std::make_pair(Coord(x, y, ++id), cellule));
         }
     }
 
-    generateObstacle(coord);//bordure + obstacle
-    generateFood(coord);//food
-    generateFloor();//floor
+//    generateAntHill(coord);
+//    generateObstacle(coord);//bordure + obstacle
+//    generateFood(coord);//food
+//    generateFloor();//floor
 
 }
 
@@ -79,28 +85,30 @@ void environnement::showMap(){
 
 void environnement::generateObstacle(Coord& coord){
     //border
-    QPixmap bedRock = QPixmap(":/assets/bedrock.png");
-    for (int x=- caseSize; x<=coord.x* caseSize; x+= caseSize){ //horizontal border
+    QPixmap oldBedRock = QPixmap(":/assets/bedrock.png");
+    QPixmap vBedRock = oldBedRock.scaled(QSize(10,100),  Qt::IgnoreAspectRatio);
+    QPixmap hBedRock = oldBedRock.scaled(QSize(100,10),  Qt::IgnoreAspectRatio);
+    for (int x= 0; x<coord.x* caseSize; x+= caseSize){ //horizontal border
 
-        Obstacle* border = new Obstacle(bedRock);
-        border->setScale(imgSize);
-        border->setPos(x,- caseSize);
+        Obstacle* border = new Obstacle(hBedRock);
+        //border->setScale(imgSize);
+        border->setPos(x,- 10);
         this->scene->addItem(border);
 
-        Obstacle* border2 = new Obstacle(bedRock);
-        border2->setScale(imgSize);
+        Obstacle* border2 = new Obstacle(hBedRock);
+        //border2->setScale(imgSize);
         border2->setPos(x, coord.y *  caseSize );
         this->scene->addItem(border2);
     }
-    for (int y=- caseSize; y<coord.y* caseSize; y+= caseSize){ //vertical border
+    for (int y= 0; y<coord.y* caseSize; y+= caseSize){ //vertical border
 
-        Obstacle* border = new Obstacle(bedRock);
-        border->setScale(imgSize);
-        border->setPos(- caseSize, y);
+        Obstacle* border = new Obstacle(vBedRock);
+        //border->setScale(imgSize);
+        border->setPos(-10, y);
         scene->addItem(border);
 
-        Obstacle* border2 = new Obstacle(bedRock);
-        border2->setScale(imgSize);
+        Obstacle* border2 = new Obstacle(vBedRock);
+        //border2->setScale(imgSize);
         border2->setPos(coord.x* caseSize, y);
         scene->addItem(border2);
     }
@@ -148,5 +156,19 @@ void environnement::generateFloor(){
     }
 }
 
+void environnement::generateAntHill(Coord& coord){
+    //food
+    QPixmap antHillPng = QPixmap(":/assets/green.png");
+    AntHill* antHill = new AntHill(antHillPng, this->scene, this->mapCellDispo, this->mapFood, coord.y);
+    this->cellIt = this->mapCellDispo.begin();
+    auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
+    //std::cout<<"d:"<<newIt->first.id<<std::endl;
+    this->mapAntHill.insert(std::make_pair(newIt->first, antHill));//insert the new food cell in the food map
+    this->mapCellDispo.erase(newIt);//remove the cell from available cells
+    antHill->setScale(imgSize);
+    antHill->setPos(newIt->first.x,newIt->first.y);
+    this->scene->addItem(antHill);
+    antHill->deplacement();
+}
 
 

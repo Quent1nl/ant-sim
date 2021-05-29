@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "environnement.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,8 +24,11 @@ void MainWindow::on_playButton_clicked()
     if (ui->inputX->text().toInt() !=0 ) this->coord.x = ui->inputX->text().toInt();
     if (ui->inputY->text().toInt() !=0 ) this->coord.y = ui->inputY->text().toInt();
     environnement *env = new environnement(this->coord);
-
     env->show();
+    env->generateAntHill(this->coord);
+    env->generateObstacle(this->coord);//bordure + obstacle
+    env->generateFood(this->coord);//food
+    env->generateFloor();//floor
     this->close();
 }
 

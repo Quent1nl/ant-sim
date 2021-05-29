@@ -17,6 +17,19 @@
    <iconset resource="resource.qrc">
     <normaloff>:/assets/ant.ico</normaloff>:/assets/ant.ico</iconset>
   </property>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>930</x>
+     <y>370</y>
+     <width>80</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>PushButton</string>
+   </property>
+  </widget>
  </widget>
  <resources>
   <include location="resource.qrc"/>

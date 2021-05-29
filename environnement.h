@@ -12,6 +12,9 @@
 #include <cellule.h>
 #include <obstacle.h>
 #include <food.h>
+#include <anthill.h>
+
+
 
 namespace Ui {
 class environnement;
@@ -31,6 +34,7 @@ public:
     void generateObstacle(Coord& coord);
     void generateFood(Coord& coord);
     void generateFloor();
+    void generateAntHill(Coord& coord);
 
 private:
     Ui::environnement *ui;
@@ -46,6 +50,10 @@ private:
     std::map<Coord, Obstacle*> mapObstacle; //map each obstacle to a coord
 
     std::map<Coord, Food*> mapFood; //map each obstacle to a coord
+
+    std::map<Coord, AntHill*> mapAntHill; //map each obstacle to a coord
+
+    Coord coord;
 };
 
 #endif // ENVIRONNEMENT_H
