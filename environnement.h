@@ -40,7 +40,7 @@ private:
     const int caseSize =  100;
     const float imgSize = 0.78f;//scale png
 
-    std::map<Coord, Cellule*> mapCellule; //map each cells to a coord
+    std::map<Coord, Cellule*> mapCellDispo; //map each cells to a coord
     std::map<Coord, Cellule*>::iterator cellIt;
 
     std::map<Coord, Obstacle*> mapObstacle; //map each obstacle to a coord

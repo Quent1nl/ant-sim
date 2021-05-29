@@ -44,7 +44,7 @@ environnement::environnement(Coord coord,QWidget *parent ):
             QPainter painter(&dirt);
             painter.drawPixmap(x+50, y+40, ant);//add ant on cell png
             Cellule* cellule = new Cellule(dirt);
-            this->mapCellule.insert(std::make_pair(Coord(x, y, ++id), cellule));
+            this->mapCellDispo.insert(std::make_pair(Coord(x, y, ++id), cellule));
         }
     }
 
@@ -63,7 +63,7 @@ environnement::~environnement()
 }
 
 void environnement::showMap(){
-    for (const auto &p : this->mapCellule)
+    for (const auto &p : this->mapCellDispo)
     {
         std::cout << "x : " << p.first.x << std::endl // string (key)
                   << "y : " << p.first.y << std::endl
@@ -73,7 +73,7 @@ void environnement::showMap(){
                   << std::endl;
 
     }
-    std::cout<<this->mapCellule.size();
+    std::cout<<this->mapCellDispo.size();
 
 }
 
@@ -110,11 +110,11 @@ void environnement::generateObstacle(Coord& coord){
     for (int i = 1; i <= std::round(std::sqrt(coord.x * coord.y)); i++ )//nombre de nourriture max
     {
         Obstacle* obstacle = new Obstacle(cobble);
-        this->cellIt = this->mapCellule.begin();
-        auto newIt = std::next(this->cellIt, std::rand() % this->mapCellule.size() );//select a random cell available
+        this->cellIt = this->mapCellDispo.begin();
+        auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
         //std::cout<<"d:"<<newIt->first.id<<std::endl;
         this->mapObstacle.insert(std::make_pair(newIt->first, obstacle));//insert the new food cell in the food map
-        this->mapCellule.erase(newIt);
+        this->mapCellDispo.erase(newIt);
         obstacle->setScale(imgSize);
         obstacle->setPos(newIt->first.x,newIt->first.y);//remove the cell from available cells
         this->scene->addItem(obstacle);
@@ -127,11 +127,11 @@ void environnement::generateFood(Coord& coord){
     for (int i = 1; i <= std::round(std::sqrt(coord.x * coord.y)); i++ ) //nombre de nourriture max
     {
         Food* food = new Food(foodPng);
-        this->cellIt = this->mapCellule.begin();
-        auto newIt = std::next(this->cellIt, std::rand() % this->mapCellule.size() );//select a random cell available
+        this->cellIt = this->mapCellDispo.begin();
+        auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
         //std::cout<<"d:"<<newIt->first.id<<std::endl;
         this->mapFood.insert(std::make_pair(newIt->first, food));//insert the new food cell in the food map
-        this->mapCellule.erase(newIt);//remove the cell from available cells
+        this->mapCellDispo.erase(newIt);//remove the cell from available cells
         food->setScale(imgSize);
         food->setPos(newIt->first.x,newIt->first.y);
         this->scene->addItem(food);
@@ -140,7 +140,7 @@ void environnement::generateFood(Coord& coord){
 
 void environnement::generateFloor(){
     //add normal floor
-    for (const auto &p : this->mapCellule)//iterate through all cells still available
+    for (const auto &p : this->mapCellDispo)//iterate through all cells still available
     {
         p.second->setScale(imgSize);
         p.second->setPos(p.first.x,p.first.y);
