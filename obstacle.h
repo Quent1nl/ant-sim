@@ -6,13 +6,10 @@
 class Obstacle : public Cellule
 {
     public:
-    /*!
-     * \brief Obstacle
-     * \param pixmap, picture to display
-     */
+
     Obstacle(QPixmap pixmap) : Cellule(pixmap){}
 
-    virtual ~Obstacle(){}
+    ~Obstacle(){}
 };
 
 #endif // OBSTACLE_H

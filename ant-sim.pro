@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     cellule.cpp \
     environnement.cpp \
+    food.cpp \
     main.cpp \
     mainwindow.cpp \
     obstacle.cpp
@@ -18,6 +19,7 @@ SOURCES += \
 HEADERS += \
     cellule.h \
     environnement.h \
+    food.h \
     mainwindow.h \
     obstacle.h
 

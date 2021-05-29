@@ -10,7 +10,6 @@ struct Coord{
     Coord(int x, int y, int id) : x(x), y(y), id(id) {};
 };
 inline bool operator<(const Coord& coord1, const Coord& coord2) { return  coord1.id < coord2.id; }
-inline bool operator==(const Coord& coord1, const Coord& coord2) { return  coord1.id == coord2.id; }
 
 class Cellule : public QGraphicsPixmapItem
 {

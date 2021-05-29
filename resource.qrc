@@ -4,5 +4,7 @@
         <file>assets/cobblestone.png</file>
         <file>assets/dirt.png</file>
         <file>assets/green.png</file>
+        <file>assets/food.png</file>
+        <file>assets/bedrock.png</file>
     </qresource>
 </RCC>
