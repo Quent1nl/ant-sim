@@ -3,15 +3,11 @@
 
 #include <QMainWindow>
 
+#include <cellule.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
-
-struct Coord{
-    int x = 1000;
-    int y = 1000;
-};
 
 class MainWindow : public QMainWindow
 {
@@ -25,9 +21,8 @@ public:
 private slots:
     void on_playButton_clicked();
 
-
 private:
     Ui::MainWindow *ui;
-    Coord coord;
+    Coord coord ;
 };
 #endif // MAINWINDOW_H

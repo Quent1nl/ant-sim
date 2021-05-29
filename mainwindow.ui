@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resource.qrc">
-    <normaloff>:/icon/assets/ant.ico</normaloff>:/icon/assets/ant.ico</iconset>
+    <normaloff>:/assets/ant.ico</normaloff>:/assets/ant.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="labelEvaporation">
@@ -180,7 +180,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="resource.qrc">:/icon/assets/ant.ico</pixmap>
+     <pixmap resource="resource.qrc">:/assets/ant.ico</pixmap>
     </property>
    </widget>
    <widget class="QLineEdit" name="inputY">
