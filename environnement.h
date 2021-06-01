@@ -7,12 +7,15 @@
 #include <iostream>
 #include <string>
 #include <QPainter>
+#include <windows.h>
 
 #include <mainwindow.h>//pour le coord, à enlever lorsque l'on aura une classe coord
 #include <cellule.h>
 #include <obstacle.h>
 #include <food.h>
 #include <anthill.h>
+#include <ant.h>
+
 
 
 
@@ -31,10 +34,11 @@ public:
     ~environnement();
 
     void showMap();
-    void generateObstacle(Coord& coord);
-    void generateFood(Coord& coord);
+    void generateObstacle();
+    void generateFood();
     void generateFloor();
-    void generateAntHill(Coord& coord);
+    void generateAntHill();
+    void moveAnt();
 
 private:
     Ui::environnement *ui;
@@ -49,9 +53,12 @@ private:
 
     std::map<Coord, Obstacle*> mapObstacle; //map each obstacle to a coord
 
-    std::map<Coord, Food*> mapFood; //map each obstacle to a coord
+    std::map<Coord, Food*> mapFood; //map each food to a coord
 
-    std::map<Coord, AntHill*> mapAntHill; //map each obstacle to a coord
+    std::map<Coord, AntHill*> mapAntHill; //map each AntHill to a coord
+    std::map<Coord, AntHill*>::iterator antHillIt; //map each AntHill to a coord
+
+    std::map<Ant*, AntHill*> mapAnt; //map each ant to a anthill
 
     Coord coord;
 };

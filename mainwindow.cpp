@@ -25,10 +25,11 @@ void MainWindow::on_playButton_clicked()
     if (ui->inputY->text().toInt() !=0 ) this->coord.y = ui->inputY->text().toInt();
     environnement *env = new environnement(this->coord);
     env->show();
-    env->generateAntHill(this->coord);
-    env->generateObstacle(this->coord);//bordure + obstacle
-    env->generateFood(this->coord);//food
+    env->generateObstacle();//bordure + obstacle
+    env->generateFood();//food
+    env->generateAntHill();
     env->generateFloor();//floor
+    env->moveAnt();
     this->close();
 }
 
