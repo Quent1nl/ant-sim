@@ -9,6 +9,8 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    ant.cpp \
+    anthill.cpp \
     cellule.cpp \
     environnement.cpp \
     food.cpp \
@@ -17,6 +19,8 @@ SOURCES += \
     obstacle.cpp
 
 HEADERS += \
+    ant.h \
+    anthill.h \
     cellule.h \
     environnement.h \
     food.h \

@@ -4,6 +4,8 @@
 #include <QMainWindow>
 
 #include <cellule.h>
+#include <environnement.h>
+#include <ant.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
