@@ -4,45 +4,35 @@
 Coord Ant::getAdjacent(const Coord& coord) {
 
 
-    this->cellIt = this->mapCellDispo.find(coord);
+    this->cellIt = this->mapCellDispo.find(coord); // Find current ant's position
     std::cout<< "Coord de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
     Coord co;
 
-    do {
-        switch(rand()%4 + 1 ){
-        case 1:
-            co.id = coord.id - 1;
-            this->cellIt = this->mapCellDispo.find(co);
-            std::cout<< "case en haut de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
-            break;
+    std::list<int> adjacentCasesIDs = {-1, +1, -nbLigne, +nbLigne}; // List of available cases IDs among up/down/left/right cases
+    auto adjacentCasesIDs_front = adjacentCasesIDs.begin(); // Iterator over adjacentCasesIDs
+    std::list<Coord> availableAdjacentCases = {}; // List of available cases among up/down/left/right cases
+    auto availableAdjacentCases_front = availableAdjacentCases.begin(); // Iterator over adjacentCasesIDs
 
-        case 2:
-            co.id = coord.id - 1;
-            this->cellIt = this->mapCellDispo.find(co);
-            std::cout<< "case en haut de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
-            break;
+    for (int i = 0; i < 4; i++ ){
+        std::advance(adjacentCasesIDs_front, i); // Go to i-index in list
 
-        case 3:
-            co.id = coord.id - nbLigne;
-            this->cellIt = this->mapCellDispo.find(co);
-            std::cout<< "case a gauche de la fourmi x: "<<this->cellIt->first.x<< "y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
-            break;
+        std::cout<< "current case id delta : "<<*adjacentCasesIDs_front<<std::endl;
 
-        case 4:
-            co.id = coord.id + nbLigne;
-            this->cellIt = this->mapCellDispo.find(co);
-            std::cout<< "case a droite de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
-            break;
+        Coord currentPos;
+        currentPos.id = coord.id+*adjacentCasesIDs_front; // Current pos plus delta
+        std::cout<< "current case id searched : "<<currentPos.id<<std::endl;
+        this->cellIt = this->mapCellDispo.find(currentPos); // Check if pos is available
+        std::cout<< "current find case x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+        if(this->cellIt->first.id <= nbLigne * nbLigne || this->cellIt->first.id < 0) { //Check if pos is not out of range or negative
+            availableAdjacentCases.push_back(this->cellIt->first); //Add pos in available adjacent cases
         }
     }
 
-        while(this->cellIt->first.id > nbLigne * nbLigne || this->cellIt->first.id<0);
-
-        std::cout<<this->cellIt->first.id<<std::endl;
-        this->newCoord.id = this->cellIt->first.id;
-        this->newCoord.x = this->cellIt->first.x;
-        this->newCoord.y = this->cellIt->first.y;
-        return this->newCoord;
+    int randomIndex = rand()%4; // Take rand number between 0 and 4
+    std::cout<< "current random id : "<<randomIndex<<std::endl;
+    std::advance(availableAdjacentCases, randomIndex); // Go to random pos
+    Coord newCoord = *availableAdjacentCases_front; // Set new pos
+    return this->newCoord;
 
 
 }
