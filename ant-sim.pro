@@ -12,24 +12,24 @@ SOURCES += \
     ant.cpp \
     anthill.cpp \
     cellule.cpp \
-    environnement.cpp \
     food.cpp \
     main.cpp \
-    mainwindow.cpp \
-    obstacle.cpp
+    map.cpp \
+    obstacle.cpp \
+    scene.cpp
 
 HEADERS += \
+    Coordinates.h \
     ant.h \
     anthill.h \
     cellule.h \
-    environnement.h \
     food.h \
-    mainwindow.h \
-    obstacle.h
+    map.h \
+    obstacle.h \
+    scene.h
 
 FORMS += \
-    environnement.ui \
-    mainwindow.ui
+    map.ui
 
 TRANSLATIONS += \
     ant-sim_en_150.ts

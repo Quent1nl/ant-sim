@@ -7,6 +7,7 @@
 
 #include <cellule.h>
 #include <food.h>
+#include <Coordinates.h>
 
 
 

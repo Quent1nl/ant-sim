@@ -1,7 +1,8 @@
-#include "mainwindow.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
+
+#include <map.h>
 
 int main(int argc, char *argv[])
 {
@@ -17,9 +18,8 @@ int main(int argc, char *argv[])
         }
     }
 
-
-    MainWindow win;
-    win.show();
+    Map map;
+    map.show();
 
     return a.exec();
 }
