@@ -6,7 +6,7 @@
 class Food : public Cellule
 {
 public:
-    Food(QPixmap pixmap) : Cellule(pixmap){};
+    Food() : Cellule(QPixmap(":/assets/food.png")){this->setScale(0.78);};
     ~Food(){};
 };
 

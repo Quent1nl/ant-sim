@@ -2,17 +2,16 @@
 #define ANTHILL_H
 
 #include <iostream>
-#include <QGraphicsPixmapItem>
-#include <QGraphicsView>
+#include <cellule.h>
 
 
 
 
-class AntHill : public QGraphicsPixmapItem
+class AntHill : public Cellule
 {
 public:
-    AntHill();
-    AntHill(QPixmap pixmap) : QGraphicsPixmapItem(pixmap){};
+    AntHill() : Cellule(QPixmap(":/assets/green.png")){this->setScale(0.78);};
+
 
     ~AntHill(){};
 

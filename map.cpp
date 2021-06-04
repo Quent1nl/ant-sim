@@ -1,49 +1,27 @@
-#include "environnement.h"
-#include "ui_environnement.h"
+#include "map.h"
+#include "ui_map.h"
 
-
-
-environnement::environnement(QWidget *parent) :
+Map::Map(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::environnement)
+    ui(new Ui::Map)
 {
-    ui->setupUi(this); 
-}
-
-environnement::environnement(Coord coord,QWidget *parent ):
-    QWidget(parent),
-    ui(new Ui::environnement)
-{
-    this->coord = coord;
     ui->setupUi(this);
-    this->resize(this->coord.x * caseSize + 230, this->coord.y* caseSize + 230);
-
+    this->scene = new Scene(this);
     //layout de la fenêtre
     this->setLayout(new QVBoxLayout);
-    //graphicView qui contient graphic scene
-    view = new QGraphicsView(this);
-    this->layout()->addWidget(view);
+    this->layout()->addWidget(ui->graphicsView);
+     //graphicView qui contient graphic scene
+    ui->graphicsView->setScene(scene);
+}
 
-    //graphic Scene, on y insère des widgets
-    scene = new QGraphicsScene;
-    view->setScene(scene);
+Map::~Map()
+{
+    delete ui;
+}
 
-
-
-
-
-    //map each cells to a coord
+void Map::generateCellDispo()
+{
     QPixmap dirt = QPixmap(":/assets/dirt.png");
-//    //ant png
-//    QPixmap oldAnt(":/assets/ant.png");
-//    QPixmap ant = oldAnt.scaled(QSize(50,50),  Qt::KeepAspectRatio);
-//    //change color of the ant
-//    auto mask = ant.createMaskFromColor(QColor(0, 0, 0),Qt::MaskOutColor )  ;
-//    QPainter p (&ant);
-//    p.setPen(QColor(0, 0, 255));
-//    p.drawPixmap(ant.rect(), mask, mask.rect());
-//    p.end();
-
     int id = 0;
     for (int x=0; x<this->coord.x* caseSize; x+= caseSize){
         for (int y=0; y<this->coord.y* caseSize; y+= caseSize){
@@ -53,38 +31,10 @@ environnement::environnement(Coord coord,QWidget *parent ):
             this->mapCellDispo.insert(std::make_pair(Coord(x, y, ++id), cellule));
         }
     }
-
-//    generateAntHill(coord);
-//    generateObstacle(coord);//bordure + obstacle
-//    generateFood(coord);//food
-//    generateFloor();//floor
-
 }
 
-
-environnement::~environnement()
+void Map::generateObstacle()
 {
-    delete ui;
-    delete view;
-    delete scene;
-}
-
-void environnement::showMap(){
-    for (const auto &p : this->mapCellDispo)
-    {
-        std::cout << "x : " << p.first.x << std::endl // string (key)
-                  << "y : " << p.first.y << std::endl
-                  << "id : " << p.first.id << std::endl // string (key)
-                  << ':'
-                  << p.second   // string's value
-                  << std::endl;
-
-    }
-    std::cout<<this->mapCellDispo.size();
-
-}
-
-void environnement::generateObstacle(){
     //border
     QPixmap oldBedRock = QPixmap(":/assets/bedrock.png");
     QPixmap vBedRock = oldBedRock.scaled(QSize(10,100),  Qt::IgnoreAspectRatio);
@@ -130,12 +80,12 @@ void environnement::generateObstacle(){
     }
 }
 
-void environnement::generateFood(){
+void Map::generateFood()
+{
     //food
-    QPixmap foodPng = QPixmap(":/assets/food.png");
     for (int i = 1; i <= std::round(std::sqrt(this->coord.x * this->coord.y)); i++ ) //nombre de nourriture max
     {
-        Food* food = new Food(foodPng);
+        Food* food = new Food();
         this->cellIt = this->mapCellDispo.begin();
         auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
         //std::cout<<"d:"<<newIt->first.id<<std::endl;
@@ -147,7 +97,8 @@ void environnement::generateFood(){
     }
 }
 
-void environnement::generateFloor(){
+void Map::generateFloor()
+{
     //add normal floor
     for (const auto &p : this->mapCellDispo)//iterate through all cells still available
     {
@@ -157,47 +108,56 @@ void environnement::generateFloor(){
     }
 }
 
-void environnement::generateAntHill(){
-    //antHill
-    QPixmap antHillPng = QPixmap(":/assets/green.png");
-    AntHill* antHill = new AntHill(antHillPng);
+void Map::generateAntHill()
+{
+    AntHill* antHill = new AntHill();
     this->cellIt = this->mapCellDispo.begin();
     auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
 
     Coord antHillCoord(newIt->first.x, newIt->first.y, newIt->first.id);
     this->mapAntHill.insert(std::make_pair(antHillCoord, antHill));//insert the new antHill cell in the antHill map
     this->mapCellDispo.erase(newIt);//remove the cell from available cells
-    antHill->setScale(imgSize);    
+    antHill->setScale(imgSize);
     antHill->setPos(antHillCoord.x,antHillCoord.y);
     this->scene->addItem(antHill);
-
-    //create random ants
-    QPixmap antPng(":/assets/ant.png");
-    Ant *ant = new Ant(antPng, this->mapCellDispo, this->mapFood, this->coord.y);
-    ant->setScale(0.78);
-
-    this->mapAnt.insert(std::make_pair(ant,antHill));
 }
 
-void environnement::moveAnt(){
+void Map::on_playButton_clicked()
+{
+    if (ui->inputX->text().toFloat() !=0 ) this->coord.x = ui->inputX->text().toFloat();
+    if (ui->inputY->text().toFloat() !=0 ) this->coord.y = ui->inputY->text().toFloat();
+    //resize
+    this->resize((this->coord.x * caseSize) + 70, (this->coord.y* caseSize) + 70);
+    //ui->graphicsView->resize(this->coord.x * caseSize +50 , this->coord.y* caseSize+50);
+    this->scene->setSceneRect(-10,-10,this->coord.x * caseSize + 20 , this->coord.y* caseSize+20);
 
-    QPixmap antPng(":/assets/ant.png");
-    Ant *ant = new Ant(antPng, this->mapCellDispo, this->mapFood, this->coord.y);
-    ant->setFlag(QGraphicsItem::ItemIsMovable, true);
-    ant->setScale(0.78);
-    this->antHillIt = this->mapAntHill.begin();
-    auto newIt = std::next(this->antHillIt, std::rand() % this->mapAntHill.size() );//select a antHill  available
-    Coord antHillCoord(newIt->first.x, newIt->first.y, newIt->first.id);
-    Coord destination = ant->getAdjacent(antHillCoord);
+    ui->widget->hide();
+    QPen myPen = QPen(Qt::red);
+    QLineF TopLine(scene->sceneRect().topLeft(), scene->sceneRect().topRight());
+    QLineF RightLine(scene->sceneRect().topRight(), scene->sceneRect().bottomRight());
+    QLineF BotLine(scene->sceneRect().bottomLeft(), scene->sceneRect().bottomLeft());
+    QLineF LeftLine(scene->sceneRect().topLeft(), scene->sceneRect().bottomLeft());
+    scene->addLine(TopLine,myPen);
+    scene->addLine(RightLine,myPen);
+    scene->addLine(BotLine,myPen);
+    scene->addLine(LeftLine,myPen);
 
-    ant->setPos(destination.x, destination.y);
+
+    generateCellDispo();
+
+    generateObstacle();
+    generateFood();
+    generateAntHill();
+    generateFloor();
+
+    Ant * ant = new Ant(this->mapCellDispo, this->coord.y);
     ant->setZValue(2);
+    //ant->setPos(300,200);
     this->scene->addItem(ant);
-    for (int i = 0; i<30;i++){
-        ant->moveAnt();
-        Sleep(16);
-    }
+
+    ant->moveAnt();
+
+
 
 }
-
 
