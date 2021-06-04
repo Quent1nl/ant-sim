@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <iostream>
 #include <math.h>
+#include <QVBoxLayout>
 
 #include <scene.h>
 #include <obstacle.h>

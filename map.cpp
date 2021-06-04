@@ -7,7 +7,13 @@ Map::Map(QWidget *parent) :
 {
     ui->setupUi(this);
     this->scene = new Scene(this);
-    }
+    //layout de la fenêtre
+    this->setLayout(new QVBoxLayout);
+    this->layout()->addWidget(ui->graphicsView);
+     //graphicView qui contient graphic scene
+    ui->graphicsView->setScene(scene);
+}
+
 Map::~Map()
 {
     delete ui;
@@ -118,21 +124,40 @@ void Map::generateAntHill()
 
 void Map::on_playButton_clicked()
 {
-    if (ui->inputX->text().toInt() !=0 ) this->coord.x = ui->inputX->text().toInt();
-    if (ui->inputY->text().toInt() !=0 ) this->coord.y = ui->inputY->text().toInt();
+    if (ui->inputX->text().toFloat() !=0 ) this->coord.x = ui->inputX->text().toFloat();
+    if (ui->inputY->text().toFloat() !=0 ) this->coord.y = ui->inputY->text().toFloat();
     //resize
     this->resize((this->coord.x * caseSize) + 70, (this->coord.y* caseSize) + 70);
-    ui->graphicsView->resize(this->coord.x * caseSize +50 , this->coord.y* caseSize+50);
+    //ui->graphicsView->resize(this->coord.x * caseSize +50 , this->coord.y* caseSize+50);
     this->scene->setSceneRect(-10,-10,this->coord.x * caseSize + 20 , this->coord.y* caseSize+20);
-    ui->widget->hide();
 
-    ui->graphicsView->setScene(scene);
+    ui->widget->hide();
+    QPen myPen = QPen(Qt::red);
+    QLineF TopLine(scene->sceneRect().topLeft(), scene->sceneRect().topRight());
+    QLineF RightLine(scene->sceneRect().topRight(), scene->sceneRect().bottomRight());
+    QLineF BotLine(scene->sceneRect().bottomLeft(), scene->sceneRect().bottomLeft());
+    QLineF LeftLine(scene->sceneRect().topLeft(), scene->sceneRect().bottomLeft());
+    scene->addLine(TopLine,myPen);
+    scene->addLine(RightLine,myPen);
+    scene->addLine(BotLine,myPen);
+    scene->addLine(LeftLine,myPen);
+
 
     generateCellDispo();
+
     generateObstacle();
     generateFood();
     generateAntHill();
     generateFloor();
+
+    Ant * ant = new Ant(this->mapCellDispo, this->coord.y);
+    ant->setZValue(2);
+    //ant->setPos(300,200);
+    this->scene->addItem(ant);
+
+    ant->moveAnt();
+
+
 
 }
 
