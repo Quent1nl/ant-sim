@@ -19,10 +19,10 @@ SOURCES += \
     scene.cpp
 
 HEADERS += \
-    Coordinates.h \
     ant.h \
     anthill.h \
     cellule.h \
+    coordinates.h \
     food.h \
     map.h \
     obstacle.h \

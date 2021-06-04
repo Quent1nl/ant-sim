@@ -11,7 +11,7 @@
 #include <food.h>
 #include <anthill.h>
 #include <ant.h>
-#include <Coordinates.h>
+#include <coordinates.h>
 
 namespace Ui {
 class Map;
