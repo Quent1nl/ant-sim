@@ -15,13 +15,13 @@ Ant::Ant():
     antTimer->start(150);
 }
 
-Ant::Ant(std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne):
+Ant::Ant(std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos):
     mapCellDispo(_mapCellDispo),
     nbLigne(_nbLigne),
     legPosition(0)
 {
-    //setx(100);
-    //setY(200);
+    setx(anthillPos.x);
+    setY(anthillPos.y);
     setPixmap(QPixmap(":/assets/ant.png"));
     this->setScale(scaleSize);
 

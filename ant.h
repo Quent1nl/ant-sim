@@ -27,7 +27,7 @@ class Ant: public QObject, public QGraphicsPixmapItem
     Q_PROPERTY(qreal rotation READ rotation WRITE setRotation /*NOTIFY rotationChanged*/)
 public:
     Ant();
-    Ant(std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne);
+    Ant(std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos);
     //Ant(const Ant &ant);
     ~Ant(){};
 

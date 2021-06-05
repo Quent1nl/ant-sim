@@ -10,7 +10,7 @@
 class AntHill : public Cellule
 {
 public:
-    AntHill() : Cellule(QPixmap(":/assets/green.png")){this->setScale(0.78);};
+    AntHill() : Cellule(QPixmap(":/assets/green.png")){this->setScale(0.78); this->setZValue(2);};
 
 
     ~AntHill(){};

@@ -116,9 +116,8 @@ void Map::generateFood()
                             goto break_me;
                         }
                     }
-
-                 }
                 }
+            }
             break_me:
                 delete food;
                 std::cout<<"food taken"<<std::endl;
@@ -151,6 +150,12 @@ void Map::generateAntHill()
     antHill->setScale(imgSize);
     antHill->setPos(antHillCoord.x,antHillCoord.y);
     this->scene->addItem(antHill);
+    Ant * ant = new Ant(this->mapMove, this->coord.y,antHillCoord);
+    ant->setZValue(3);
+
+    this->scene->addItem(ant);
+
+    ant->moveAnt();
 }
 
 void Map::on_playButton_clicked()
@@ -166,19 +171,15 @@ void Map::on_playButton_clicked()
 
 
     generateCellDispo();
+    generateObstacle();
+    this->mapMove.insert(this->mapCellDispo.begin(),this->mapCellDispo.end());//map will store free cells to move to
+    generateAntHill();    
 
-    generateObstacle();    
-    generateAntHill();
-    this->mapMove.insert(this->mapCellDispo.begin(),this->mapCellDispo.end());
     generateIntialFood();
     //generateFood();
     generateFloor();
 
-    Ant * ant = new Ant(this->mapMove, this->coord.y);
-    ant->setZValue(3);
 
-    this->scene->addItem(ant);
-    ant->moveAnt();
     QTimer * antTimer = new QTimer(this);
     connect(antTimer, &QTimer::timeout,[=](){
            generateFood();
