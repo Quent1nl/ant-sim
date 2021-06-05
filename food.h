@@ -1,13 +1,34 @@
 #ifndef FOOD_H
 #define FOOD_H
 
-#include <cellule.h>
+#include <QGraphicsPixmapItem>
+#include <QPropertyAnimation>
+#include <QtDebug>
+#include <QGraphicsScene>
 
-class Food : public Cellule
+#include <ant.h>
+
+class Food : public QObject, public QGraphicsPixmapItem
 {
+    Q_OBJECT
+    Q_PROPERTY(int lifeTime READ lifeTime WRITE setLifeTime)
 public:
-    Food() : Cellule(QPixmap(":/assets/food.png")){this->setScale(0.78);};
-    ~Food(){};
+
+    explicit Food();
+    ~Food();;
+
+    int lifeTime() const;
+    void setLifeTime(int newLifeTime);
+
+
+signals:
+    void takeFood();
+private:
+    QPropertyAnimation * foodAnimation;
+    int m_lifeTime;
+    QGraphicsEllipseItem * centerElipse;
+
+    bool collideWithAnt();
 };
 
 #endif // FOOD_H

@@ -27,6 +27,7 @@ public:
 
     void generateCellDispo();
     void generateObstacle();
+    void generateIntialFood();
     void generateFood();
     void generateFloor();
     void generateAntHill();
@@ -45,6 +46,8 @@ private:
 
     std::map<Coord, Cellule*> mapCellDispo; //map each cells to a coord
     std::map<Coord, Cellule*>::iterator cellIt;
+
+    std::map<Coord, Cellule*> mapMove; //map each cells free to move to a coord
 
     std::map<Coord, Obstacle*> mapObstacle; //map each obstacle to a coord
 

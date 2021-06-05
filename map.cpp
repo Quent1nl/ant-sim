@@ -10,6 +10,7 @@ Map::Map(QWidget *parent) :
     //layout de la fenêtre
     this->setLayout(new QVBoxLayout);
     this->layout()->addWidget(ui->graphicsView);
+    this->setMaximumSize(1500,800);
      //graphicView qui contient graphic scene
     ui->graphicsView->setScene(scene);
 }
@@ -31,6 +32,7 @@ void Map::generateCellDispo()
             this->mapCellDispo.insert(std::make_pair(Coord(x, y, ++id), cellule));
         }
     }
+
 }
 
 void Map::generateObstacle()
@@ -80,11 +82,19 @@ void Map::generateObstacle()
     }
 }
 
+void Map::generateIntialFood()
+{
+    for (int i = 1; i <= std::round(std::sqrt(this->coord.x * this->coord.y)); i++ ) //nombre de nourriture max
+    {
+        generateFood();
+    }
+
+}
+
 void Map::generateFood()
 {
     //food
-    for (int i = 1; i <= std::round(std::sqrt(this->coord.x * this->coord.y)); i++ ) //nombre de nourriture max
-    {
+
         Food* food = new Food();
         this->cellIt = this->mapCellDispo.begin();
         auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
@@ -93,14 +103,35 @@ void Map::generateFood()
         this->mapCellDispo.erase(newIt);//remove the cell from available cells
         food->setScale(imgSize);
         food->setPos(newIt->first.x,newIt->first.y);
+
+        connect(food, &Food::takeFood, [=](){
+            this->scene->removeItem(food);
+            //nested loop because we need to repopulate the mapCellDispo map, freeing the cell for the next food generation
+            for (auto itr = this->mapFood.begin(); itr != this->mapFood.end(); ++itr) {
+                if (itr->second == food){
+                    for (auto it = this->mapCellDispo.begin(); it != this->mapCellDispo.end(); ++it) {
+                        if (it->first == itr->first){
+                            this->mapCellDispo.insert(std::make_pair(itr->first,it->second));
+                            this->mapFood.erase(itr);
+                            goto break_me;
+                        }
+                    }
+
+                 }
+                }
+            break_me:
+                delete food;
+                std::cout<<"food taken"<<std::endl;
+        });
         this->scene->addItem(food);
-    }
+
+
 }
 
 void Map::generateFloor()
 {
     //add normal floor
-    for (const auto &p : this->mapCellDispo)//iterate through all cells still available
+    for (const auto &p : this->mapMove)//iterate through all cells still available
     {
         p.second->setScale(imgSize);
         p.second->setPos(p.first.x,p.first.y);
@@ -132,32 +163,27 @@ void Map::on_playButton_clicked()
     this->scene->setSceneRect(-10,-10,this->coord.x * caseSize + 20 , this->coord.y* caseSize+20);
 
     ui->widget->hide();
-    QPen myPen = QPen(Qt::red);
-    QLineF TopLine(scene->sceneRect().topLeft(), scene->sceneRect().topRight());
-    QLineF RightLine(scene->sceneRect().topRight(), scene->sceneRect().bottomRight());
-    QLineF BotLine(scene->sceneRect().bottomLeft(), scene->sceneRect().bottomLeft());
-    QLineF LeftLine(scene->sceneRect().topLeft(), scene->sceneRect().bottomLeft());
-    scene->addLine(TopLine,myPen);
-    scene->addLine(RightLine,myPen);
-    scene->addLine(BotLine,myPen);
-    scene->addLine(LeftLine,myPen);
 
 
     generateCellDispo();
 
-    generateObstacle();
-    generateFood();
+    generateObstacle();    
     generateAntHill();
+    this->mapMove.insert(this->mapCellDispo.begin(),this->mapCellDispo.end());
+    generateIntialFood();
+    //generateFood();
     generateFloor();
 
-    Ant * ant = new Ant(this->mapCellDispo, this->coord.y);
-    ant->setZValue(2);
-    //ant->setPos(300,200);
+    Ant * ant = new Ant(this->mapMove, this->coord.y);
+    ant->setZValue(3);
+
     this->scene->addItem(ant);
-
     ant->moveAnt();
-
-
+    QTimer * antTimer = new QTimer(this);
+    connect(antTimer, &QTimer::timeout,[=](){
+           generateFood();
+    });
+    antTimer->start(5000);
 
 }
 

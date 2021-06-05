@@ -9,7 +9,7 @@
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
 #include <QSequentialAnimationGroup>
-#include <stack>
+
 #include <cmath>
 
 #include <cellule.h>
@@ -43,7 +43,7 @@ public:
 
     const qreal &rotation() const;
     void setRotation(const qreal &newRotation);
-    void rotate(const qreal &end);
+    void rotate(const qreal &end, int duration);
 
 private:
     std::map<Coord, Cellule*> mapCellDispo;//map each cells to a coord    
@@ -63,7 +63,7 @@ private:
 
 
     qreal m_rotation;
-    std::stack<int> stack; //top = 0 right = 1 bot = 2 left = 3
+
 signals:
 
 public slots :

@@ -4,6 +4,7 @@
 Ant::Ant():
     legPosition(0)
 {
+
     setPixmap(QPixmap(":/assets/ant.png"));
     //this->setScale(scaleSize);
     QTimer * antTimer = new QTimer(this);
@@ -19,6 +20,8 @@ Ant::Ant(std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne):
     nbLigne(_nbLigne),
     legPosition(0)
 {
+    //setx(100);
+    //setY(200);
     setPixmap(QPixmap(":/assets/ant.png"));
     this->setScale(scaleSize);
 
@@ -29,23 +32,20 @@ Ant::Ant(std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne):
     });
 
     antTimer->start(80);
-    this->stack.push(0);
 }
 
 
 Coord Ant::getAdjacent() {
 
     Coord * coord = new Coord(x(),y(),(this->nbLigne * (x()/100)) + 1 + (y()/100));
-    std::cout<<"current coord x:"<<coord->x<<std::endl;
-    std::cout<<"current coord y:"<<coord->y<<std::endl;
-    std::cout<<"current coord id:"<<coord->id<<std::endl;
+    std::cout<<"current coord x:"<<coord->x<<" coord y:"<<coord->y<<" id: "<<coord->id<<std::endl;
     this->cellIt = this->mapCellDispo.find(*coord);
     std::cout<< "Coord de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
     Coord co;
     bool foundKey = false;
     // load them in to a list.
     std::list<int> l = {1,2,3,4};
-    int angle;
+    qreal angle = 200;
     do {
         auto it = l.begin();
         auto newIt = std::next(it, (std::rand() % l.size())+1 );//select a random cell available
@@ -57,10 +57,7 @@ Coord Ant::getAdjacent() {
                 this->cellIt = this->mapCellDispo.find(co);
                 foundKey = true;
 
-                angle = 0 - this->stack.top();
-                this->stack.push(0);
-                this->stack.pop();
-
+                angle = 0;
                 std::cout<< "case en haut de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
 
@@ -73,10 +70,7 @@ Coord Ant::getAdjacent() {
                 this->cellIt = this->mapCellDispo.find(co);
                 foundKey = true;
 
-                angle = 2 - this->stack.top();
-                this->stack.push(2);
-                this->stack.pop();
-
+                 angle = 180;
                 std::cout<< "case en bas de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
             break;
@@ -87,12 +81,7 @@ Coord Ant::getAdjacent() {
             if (this->mapCellDispo.find(co) != this->mapCellDispo.end()){
                 this->cellIt = this->mapCellDispo.find(co);
                 foundKey = true;
-
-                angle = 3 - this->stack.top();
-                if (angle == 3) angle = -1;
-                this->stack.push(3);
-                this->stack.pop();
-
+                angle = -90;
                 std::cout<< "case a gauche de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
             break;
@@ -103,20 +92,21 @@ Coord Ant::getAdjacent() {
             if (this->mapCellDispo.find(co) != this->mapCellDispo.end()){
                 this->cellIt = this->mapCellDispo.find(co);
                 foundKey = true;
-
-                angle = 1 - this->stack.top();
-                this->stack.push(1);
-                this->stack.pop();
-
+                angle = 90;
                 std::cout<< "case a droite de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
             break;
         }
     } while(!foundKey);
-    std::cout<<"angle :"<<angle;
-    rotate(90 * angle);
-    std::cout<<this->stack.top();
-    std::cout<<"id:"<<this->cellIt->first.id<<std::endl;
+    //std::cout<<"angle :"<<angle;
+    if (angle == rotation()){
+        rotate(angle , 10);
+    }else{
+        rotate(angle , 800);
+    }
+
+
+    //std::cout<<"id:"<<this->cellIt->first.id<<std::endl;
     this->newCoord.id = this->cellIt->first.id;
     this->newCoord.x = this->cellIt->first.x;
     this->newCoord.y = this->cellIt->first.y;
@@ -127,27 +117,23 @@ Coord Ant::getAdjacent() {
 
 void Ant::moveAnt(){
 
-    setx(100);
-    setY(200);
-
     this->newCoord = getAdjacent();
 
-    std::cout<<"nouvelle coord x:"<<this->newCoord.x<<std::endl;
-    std::cout<<"nouvelle coord y:"<<this->newCoord.y<<std::endl;
+    //std::cout<<"nouvelle coord x:"<<this->newCoord.x<<" coord y : "<<this->newCoord.y<<std::endl;
 
     this->xAnimation = new QPropertyAnimation(this, "x", this);
-    this->xAnimation->setStartValue(scenePos().x());
+    this->xAnimation->setStartValue(x());
     this->xAnimation->setEndValue(this->newCoord.x);
     //this->xAnimation->setEasingCurve(QEasingCurve::InQuad);
-    this->xAnimation->setDuration(5000);
-    //this->xAnimation->start();
+    this->xAnimation->setDuration(2000);
+    //this->xAnimation->start();D
 
 
     this->yAnimation = new QPropertyAnimation(this, "y", this);
-    this->yAnimation->setStartValue(scenePos().y());
+    this->yAnimation->setStartValue(y());
     this->yAnimation->setEndValue(this->newCoord.y);
     //this->yAnimation->setEasingCurve(QEasingCurve::InQuad);
-    this->yAnimation->setDuration(5000);
+    this->yAnimation->setDuration(2000);
     //this->yAnimation->start();
 
     QParallelAnimationGroup * group = new QParallelAnimationGroup;
@@ -161,6 +147,14 @@ void Ant::moveAnt(){
     seqGroupe->addAnimation(group);
 
     seqGroupe->start();
+
+    //std::cout<<"bx : "<<x()<<" y : "<<y()<<std::endl;
+    connect(seqGroupe,&QPropertyAnimation::finished,[=](){
+
+        //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
+        moveAnt();
+
+    });
 }
 
 void Ant::updatePixmap()
@@ -215,19 +209,21 @@ void Ant::setRotation(const qreal &newRotation)
     QPointF c = boundingRect().center();//get center of ant
     QTransform t ;
     //std::cout<<"c.x : "<<c.x()<<" c.y : "<<c.y()<<std::endl;
+    //std::cout<<"zx : "<<x()<<" y : "<<y()<<std::endl;
     t.translate(c.x()*scaleSize,c.y()*scaleSize);//go to center of ant
     t.rotate(newRotation);
     t.translate(-c.x()*scaleSize,-c.y()*scaleSize);//go to center of ant
     setTransform(t);
 }
 
-void Ant::rotate(const qreal &end)
+void Ant::rotate(const qreal &end, int duration )
 {
     this->rotationAnimation = new QPropertyAnimation(this, "rotation",this);
-    std::cout<<"rotation :"<<rotation()<<std::endl;
+    std::cout<<" rotation :"<<rotation()<<std::endl;
     this->rotationAnimation->setStartValue(rotation());
     this->rotationAnimation->setEndValue(end);
     //this->rotationAnimation->setEasingCurve(QEasingCurve::Linear);
-    this->rotationAnimation->setDuration(1000);
+    this->rotationAnimation->setDuration(duration);
+    //std::cout<<"cx : "<<x()<<" y : "<<y()<<std::endl;
     //this->rotationAnimation->start();
 }

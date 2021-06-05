@@ -8,5 +8,7 @@
         <file>assets/bedrock.png</file>
         <file>assets/ant.png</file>
         <file>assets/ant2.png</file>
+        <file>assets/newAnt.png</file>
+        <file>assets/newAnt2.png</file>
     </qresource>
 </RCC>
