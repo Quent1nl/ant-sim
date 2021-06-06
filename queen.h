@@ -8,7 +8,7 @@ class Queen :  public Ant
 {
 
 public:
-    explicit Queen(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, bool isAnthill);
+    explicit Queen(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, bool isAnthill, QColor color);
 
 signals:
 

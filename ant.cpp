@@ -3,7 +3,7 @@
 
 
 
-Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos) :
+Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color) :
     mapCellDispo(_mapCellDispo),
     nbLigne(_nbLigne),
     antPng(antPng),
@@ -11,8 +11,24 @@ Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne
 {
     setx(anthillPos.x);
     setY(anthillPos.y);
-    setPixmap(QPixmap(antPng));
+
+    //color the ant
     this->antPng2 = this->antPng.left(this->antPng.lastIndexOf('.')) + "2.png";
+    this->antP = QPixmap(antPng);
+    auto mask = this->antP.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
+    QPainter p (&this->antP);
+    p.setPen(color);
+    p.drawPixmap(this->antP.rect(), mask, mask.rect());
+    p.end();
+
+    this->antP2 = QPixmap(this->antPng2);
+    auto mask2 = this->antP2.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
+    QPainter p2 (&this->antP2);
+    p2.setPen(color);
+    p2.drawPixmap(this->antP2.rect(), mask2, mask2.rect());
+    p2.end();
+
+    setPixmap(this->antP);
     this->setScale(scaleSize);
 
     QTimer * antTimer = new QTimer(this);
@@ -23,17 +39,35 @@ Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne
     antTimer->start(80);
 }
 
-Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos, bool _isAnthill):
+Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos, bool _isAnthill, QColor color):
     mapCellDispo(_mapCellDispo),
     nbLigne(_nbLigne),
     isAnthill(_isAnthill),
     antPng(antPng),    
     legPosition(0)
 {
+    this->scaleSize = 0.095;
     setx(anthillPos.x);
     setY(anthillPos.y);
-    setPixmap(QPixmap(antPng));
+    //color the ant
     this->antPng2 = this->antPng.left(this->antPng.lastIndexOf('.')) + "2.png";
+    this->antP = QPixmap(antPng);
+    auto mask = this->antP.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
+    QPainter p (&this->antP);
+    p.setPen(color);
+    p.drawPixmap(this->antP.rect(), mask, mask.rect());
+    p.end();
+
+
+
+    this->antP2 = QPixmap(this->antPng2);
+    auto mask2 = this->antP2.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
+    QPainter p2 (&this->antP2);
+    p2.setPen(color);
+    p2.drawPixmap(this->antP2.rect(), mask2, mask2.rect());
+    p2.end();
+
+    setPixmap(this->antP);
     this->setScale(scaleSize);
 
     if(this->isAnthill) {
@@ -174,12 +208,12 @@ void Ant::moveAnt(){
 void Ant::updatePixmap()
 {
     if (this->legPosition){
-        setPixmap(QPixmap(this->antPng));
+        setPixmap(this->antP);
         this->setScale(scaleSize);
         this->legPosition = 0;
     }else{
 
-        setPixmap(QPixmap(this->antPng2));
+        setPixmap(this->antP2);
         this->setScale(scaleSize);
         this->legPosition = 1;
     }

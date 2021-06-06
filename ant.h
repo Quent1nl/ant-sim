@@ -6,6 +6,8 @@
 #include <windows.h>
 #include <QObject>
 #include <QTimer>
+#include <QPainter>
+#include <QtWidgets>
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
 #include <QSequentialAnimationGroup>
@@ -27,8 +29,8 @@ class Ant: public QObject, public QGraphicsPixmapItem
     Q_PROPERTY(qreal rotation READ rotation WRITE setRotation /*NOTIFY rotationChanged*/)
 public:
     Ant(){};
-    Ant(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos);
-    Ant(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos,bool isAnthill);
+    Ant(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color);
+    Ant(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, bool isAnthill, QColor color);
     //Ant(const Ant &ant);
     ~Ant(){};
 
@@ -55,6 +57,8 @@ private:
 
     QString antPng;
     QString antPng2;
+    QPixmap antP;
+    QPixmap antP2;
 
     Coord newCoord;
 

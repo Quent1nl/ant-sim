@@ -160,13 +160,15 @@ void Map::generateAntHill()
                      << p.second   // string's value
                      << std::endl;
        }
-    Queen * queen = new Queen(":/assets/queen.png",this->mapCellInAnthill, 10,antHillCoord, true);
+    Queen * queen = new Queen(":/assets/queen.png",this->mapCellInAnthill, 10,antHillCoord, true, QColor(Qt::red));
     queen->setZValue(3);
 
     this->scene->addItem(queen);
 
-    Ant * ant = new Ant(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord);
+    Ant * ant = new Ant(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red));
     ant->setZValue(3);
+    //change color of the ant
+
 
     this->scene->addItem(ant);
 
