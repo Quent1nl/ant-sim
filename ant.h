@@ -26,8 +26,9 @@ class Ant: public QObject, public QGraphicsPixmapItem
     Q_PROPERTY(qreal y READ y WRITE setY /*NOTIFY yChanged*/)
     Q_PROPERTY(qreal rotation READ rotation WRITE setRotation /*NOTIFY rotationChanged*/)
 public:
-    Ant();
-    Ant(std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos);
+    Ant(){};
+    Ant(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos);
+    Ant(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos,bool isAnthill);
     //Ant(const Ant &ant);
     ~Ant(){};
 
@@ -47,14 +48,20 @@ public:
 
 private:
     std::map<Coord, Cellule*> mapCellDispo;//map each cells to a coord    
-    int nbLigne;    
+    int nbLigne;
+    int caseSize = 50;
+    bool isAnthill = false;
+    int idAnthill = 0;
+
+    QString antPng;
+    QString antPng2;
 
     Coord newCoord;
 
     int legPosition;
     void updatePixmap();
 
-    float scaleSize = 0.78;
+    float scaleSize = 0.4;
     qreal m_x;
     qreal m_y;
     QPropertyAnimation * xAnimation;

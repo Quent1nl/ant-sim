@@ -16,6 +16,7 @@ SOURCES += \
     main.cpp \
     map.cpp \
     obstacle.cpp \
+    queen.cpp \
     scene.cpp
 
 HEADERS += \
@@ -26,6 +27,7 @@ HEADERS += \
     food.h \
     map.h \
     obstacle.h \
+    queen.h \
     scene.h
 
 FORMS += \

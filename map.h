@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 
 #include <scene.h>
+#include <queen.h>
 #include <obstacle.h>
 #include <food.h>
 #include <anthill.h>
@@ -25,7 +26,7 @@ public:
     explicit Map(QWidget *parent = nullptr);
     ~Map();
 
-    void generateCellDispo();
+    std::map<Coord, Cellule*> generateCellDispo(int xStart, int yStart, int xEnd, int yEnd, int newCaseSize);
     void generateObstacle();
     void generateIntialFood();
     void generateFood();
@@ -39,8 +40,9 @@ private:
     Ui::Map *ui;
     Scene * scene;
 
-    const int caseSize =  100;
-    const float imgSize = 0.78f;//scale png
+    const int caseSize =  50;
+    const int obstacleSize = 100;
+    const float imgSize = 0.4f;//scale png
     Coord coord;
 
 
@@ -55,6 +57,7 @@ private:
 
     std::map<Coord, AntHill*> mapAntHill; //map each AntHill to a coord
     std::map<Coord, AntHill*>::iterator antHillIt; //map each AntHill to a coord
+    std::map<Coord, Cellule*> mapCellInAnthill; //map each cells to a coord
 
     std::map<Ant*, AntHill*> mapAnt; //map each ant to a anthill
 };

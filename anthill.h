@@ -2,20 +2,17 @@
 #define ANTHILL_H
 
 #include <iostream>
+
 #include <cellule.h>
-
-
-
+#include <coordinates.h>
 
 class AntHill : public Cellule
 {
 public:
-    AntHill() : Cellule(QPixmap(":/assets/green.png")){this->setScale(0.78); this->setZValue(2);};
-
-
+    AntHill() ;
     ~AntHill(){};
 
-
+private :
 
 };
 

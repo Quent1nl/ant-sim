@@ -1,31 +1,45 @@
 #include "ant.h"
 
 
-Ant::Ant():
+
+
+Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos) :
+    mapCellDispo(_mapCellDispo),
+    nbLigne(_nbLigne),
+    antPng(antPng),
     legPosition(0)
 {
+    setx(anthillPos.x);
+    setY(anthillPos.y);
+    setPixmap(QPixmap(antPng));
+    this->antPng2 = this->antPng.left(this->antPng.lastIndexOf('.')) + "2.png";
+    this->setScale(scaleSize);
 
-    setPixmap(QPixmap(":/assets/ant.png"));
-    //this->setScale(scaleSize);
     QTimer * antTimer = new QTimer(this);
     connect(antTimer, &QTimer::timeout,[=](){
         updatePixmap();
     });
 
-    antTimer->start(150);
+    antTimer->start(80);
 }
 
-Ant::Ant(std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos):
+Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos, bool _isAnthill):
     mapCellDispo(_mapCellDispo),
     nbLigne(_nbLigne),
+    isAnthill(_isAnthill),
+    antPng(antPng),    
     legPosition(0)
 {
     setx(anthillPos.x);
     setY(anthillPos.y);
-    setPixmap(QPixmap(":/assets/ant.png"));
+    setPixmap(QPixmap(antPng));
+    this->antPng2 = this->antPng.left(this->antPng.lastIndexOf('.')) + "2.png";
     this->setScale(scaleSize);
 
-
+    if(this->isAnthill) {
+        this->caseSize = 5;
+        this->idAnthill = (this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize);
+    }
     QTimer * antTimer = new QTimer(this);
     connect(antTimer, &QTimer::timeout,[=](){
         updatePixmap();
@@ -37,7 +51,7 @@ Ant::Ant(std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthill
 
 Coord Ant::getAdjacent() {
 
-    Coord * coord = new Coord(x(),y(),(this->nbLigne * (x()/100)) + 1 + (y()/100));
+    Coord * coord = new Coord(x(),y(),(this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize) - this->idAnthill);
     std::cout<<"current coord x:"<<coord->x<<" coord y:"<<coord->y<<" id: "<<coord->id<<std::endl;
     this->cellIt = this->mapCellDispo.find(*coord);
     std::cout<< "Coord de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
@@ -160,12 +174,13 @@ void Ant::moveAnt(){
 void Ant::updatePixmap()
 {
     if (this->legPosition){
-        setPixmap(QPixmap(":/assets/ant.png"));
-        //this->setScale(scaleSize);
+        setPixmap(QPixmap(this->antPng));
+        this->setScale(scaleSize);
         this->legPosition = 0;
     }else{
-        setPixmap(QPixmap(":/assets/ant2.png"));
-        //this->setScale(scaleSize);
+
+        setPixmap(QPixmap(this->antPng2));
+        this->setScale(scaleSize);
         this->legPosition = 1;
     }
 }

@@ -20,27 +20,26 @@ Map::~Map()
     delete ui;
 }
 
-void Map::generateCellDispo()
+std::map<Coord, Cellule*> Map::generateCellDispo(int xStart, int yStart, int xEnd, int yEnd, int newCaseSize)
 {
+    std::map<Coord, Cellule*> tempMap;
     QPixmap dirt = QPixmap(":/assets/dirt.png");
     int id = 0;
-    for (int x=0; x<this->coord.x* caseSize; x+= caseSize){
-        for (int y=0; y<this->coord.y* caseSize; y+= caseSize){
-            //QPainter painter(&dirt);
-            //painter.drawPixmap(x+50, y+40, ant);//add ant on cell png
+    for (int x= xStart; x< xEnd; x+= newCaseSize){
+        for (int y= yStart; y< yEnd; y+= newCaseSize){
             Cellule* cellule = new Cellule(dirt);
-            this->mapCellDispo.insert(std::make_pair(Coord(x, y, ++id), cellule));
+            tempMap.insert(std::make_pair(Coord(x, y, ++id), cellule));
         }
     }
-
+    return tempMap;
 }
 
 void Map::generateObstacle()
 {
     //border
     QPixmap oldBedRock = QPixmap(":/assets/bedrock.png");
-    QPixmap vBedRock = oldBedRock.scaled(QSize(10,100),  Qt::IgnoreAspectRatio);
-    QPixmap hBedRock = oldBedRock.scaled(QSize(100,10),  Qt::IgnoreAspectRatio);
+    QPixmap vBedRock = oldBedRock.scaled(QSize(10,caseSize),  Qt::IgnoreAspectRatio);
+    QPixmap hBedRock = oldBedRock.scaled(QSize(caseSize,10),  Qt::IgnoreAspectRatio);
     for (int x= 0; x<this->coord.x* caseSize; x+= caseSize){ //horizontal border
 
         Obstacle* border = new Obstacle(hBedRock);
@@ -150,11 +149,28 @@ void Map::generateAntHill()
     antHill->setScale(imgSize);
     antHill->setPos(antHillCoord.x,antHillCoord.y);
     this->scene->addItem(antHill);
-    Ant * ant = new Ant(this->mapMove, this->coord.y,antHillCoord);
+
+    this->mapCellInAnthill = generateCellDispo(antHillCoord.x, antHillCoord.y,antHillCoord.x+caseSize,antHillCoord.y+caseSize,caseSize/10);
+    for (const auto &p : this->mapCellInAnthill)
+       {
+           std::cout << "x : " << p.first.x << std::endl // string (key)
+                     << "y : " << p.first.y << std::endl
+                     << "id : " << p.first.id << std::endl
+                     << ':'
+                     << p.second   // string's value
+                     << std::endl;
+       }
+    Queen * queen = new Queen(":/assets/queen.png",this->mapCellInAnthill, 10,antHillCoord, true);
+    queen->setZValue(3);
+
+    this->scene->addItem(queen);
+
+    Ant * ant = new Ant(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord);
     ant->setZValue(3);
 
     this->scene->addItem(ant);
 
+    queen->moveAnt();
     ant->moveAnt();
 }
 
@@ -170,7 +186,7 @@ void Map::on_playButton_clicked()
     ui->widget->hide();
 
 
-    generateCellDispo();
+    this->mapCellDispo = generateCellDispo(0,0,this->coord.x* caseSize, this->coord.y* caseSize, caseSize);
     generateObstacle();
     this->mapMove.insert(this->mapCellDispo.begin(),this->mapCellDispo.end());//map will store free cells to move to
     generateAntHill();    

@@ -1,11 +1,13 @@
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
+#include <ctime>
 
 #include <map.h>
 
 int main(int argc, char *argv[])
 {
+    std::srand(std::time(nullptr));
     QApplication a(argc, argv);
 
     QTranslator translator;
