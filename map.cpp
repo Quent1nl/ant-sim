@@ -10,6 +10,7 @@ Map::Map(QWidget *parent) :
     //layout de la fenêtre
     this->setLayout(new QVBoxLayout);
     this->layout()->addWidget(ui->graphicsView);
+    this->setMaximumSize(1500,800);
      //graphicView qui contient graphic scene
     ui->graphicsView->setScene(scene);
 }
@@ -19,26 +20,26 @@ Map::~Map()
     delete ui;
 }
 
-void Map::generateCellDispo()
+std::map<Coord, Cellule*> Map::generateCellDispo(int xStart, int yStart, int xEnd, int yEnd, int newCaseSize)
 {
+    std::map<Coord, Cellule*> tempMap;
     QPixmap dirt = QPixmap(":/assets/dirt.png");
     int id = 0;
-    for (int x=0; x<this->coord.x* caseSize; x+= caseSize){
-        for (int y=0; y<this->coord.y* caseSize; y+= caseSize){
-            //QPainter painter(&dirt);
-            //painter.drawPixmap(x+50, y+40, ant);//add ant on cell png
+    for (int x= xStart; x< xEnd; x+= newCaseSize){
+        for (int y= yStart; y< yEnd; y+= newCaseSize){
             Cellule* cellule = new Cellule(dirt);
-            this->mapCellDispo.insert(std::make_pair(Coord(x, y, ++id), cellule));
+            tempMap.insert(std::make_pair(Coord(x, y, ++id), cellule));
         }
     }
+    return tempMap;
 }
 
 void Map::generateObstacle()
 {
     //border
     QPixmap oldBedRock = QPixmap(":/assets/bedrock.png");
-    QPixmap vBedRock = oldBedRock.scaled(QSize(10,100),  Qt::IgnoreAspectRatio);
-    QPixmap hBedRock = oldBedRock.scaled(QSize(100,10),  Qt::IgnoreAspectRatio);
+    QPixmap vBedRock = oldBedRock.scaled(QSize(10,caseSize),  Qt::IgnoreAspectRatio);
+    QPixmap hBedRock = oldBedRock.scaled(QSize(caseSize,10),  Qt::IgnoreAspectRatio);
     for (int x= 0; x<this->coord.x* caseSize; x+= caseSize){ //horizontal border
 
         Obstacle* border = new Obstacle(hBedRock);
@@ -80,11 +81,19 @@ void Map::generateObstacle()
     }
 }
 
+void Map::generateIntialFood()
+{
+    for (int i = 1; i <= std::round(std::sqrt(this->coord.x * this->coord.y)); i++ ) //nombre de nourriture max
+    {
+        generateFood();
+    }
+
+}
+
 void Map::generateFood()
 {
     //food
-    for (int i = 1; i <= std::round(std::sqrt(this->coord.x * this->coord.y)); i++ ) //nombre de nourriture max
-    {
+
         Food* food = new Food();
         this->cellIt = this->mapCellDispo.begin();
         auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
@@ -93,14 +102,34 @@ void Map::generateFood()
         this->mapCellDispo.erase(newIt);//remove the cell from available cells
         food->setScale(imgSize);
         food->setPos(newIt->first.x,newIt->first.y);
+
+        connect(food, &Food::takeFood, [=](){
+            this->scene->removeItem(food);
+            //nested loop because we need to repopulate the mapCellDispo map, freeing the cell for the next food generation
+            for (auto itr = this->mapFood.begin(); itr != this->mapFood.end(); ++itr) {
+                if (itr->second == food){
+                    for (auto it = this->mapCellDispo.begin(); it != this->mapCellDispo.end(); ++it) {
+                        if (it->first == itr->first){
+                            this->mapCellDispo.insert(std::make_pair(itr->first,it->second));
+                            this->mapFood.erase(itr);
+                            goto break_me;
+                        }
+                    }
+                }
+            }
+            break_me:
+                delete food;
+                std::cout<<"food taken"<<std::endl;
+        });
         this->scene->addItem(food);
-    }
+
+
 }
 
 void Map::generateFloor()
 {
     //add normal floor
-    for (const auto &p : this->mapCellDispo)//iterate through all cells still available
+    for (const auto &p : this->mapMove)//iterate through all cells still available
     {
         p.second->setScale(imgSize);
         p.second->setPos(p.first.x,p.first.y);
@@ -114,12 +143,46 @@ void Map::generateAntHill()
     this->cellIt = this->mapCellDispo.begin();
     auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
 
-    Coord antHillCoord(newIt->first.x, newIt->first.y, newIt->first.id);
-    this->mapAntHill.insert(std::make_pair(antHillCoord, antHill));//insert the new antHill cell in the antHill map
+    this->antHillCoord.x = newIt->first.x; this->antHillCoord.y = newIt->first.y ; this->antHillCoord.id = newIt->first.id;
+    this->mapAntHill.insert(std::make_pair(this->antHillCoord, antHill));//insert the new antHill cell in the antHill map
     this->mapCellDispo.erase(newIt);//remove the cell from available cells
     antHill->setScale(imgSize);
-    antHill->setPos(antHillCoord.x,antHillCoord.y);
+    antHill->setPos(this->antHillCoord.x,this->antHillCoord.y);
     this->scene->addItem(antHill);
+
+    this->mapCellInAnthill = generateCellDispo(this->antHillCoord.x, this->antHillCoord.y,this->antHillCoord.x+caseSize,this->antHillCoord.y+caseSize,caseSize/10);
+//    for (const auto &p : this->mapCellInAnthill)
+//       {
+//           std::cout << "x : " << p.first.x << std::endl // string (key)
+//                     << "y : " << p.first.y << std::endl
+//                     << "id : " << p.first.id << std::endl
+//                     << ':'
+//                     << p.second   // string's value
+//                     << std::endl;
+//       }
+    Queen * queen = new Queen(":/assets/queen.png",this->mapCellInAnthill, 10,this->antHillCoord, true, QColor(Qt::red));
+    queen->setZValue(3);
+    this->scene->addItem(queen);
+
+    connect(queen, &Queen::generateEgg, [=](){
+        eggCoord = queen->getNewCoord();
+        Egg * egg = new Egg(":/assets/egg.png", this->mapCellInAnthill, 10, eggCoord , true, QColor(Qt::red));
+        egg->setZValue(2);
+        this->scene->addItem(egg);
+        connect(egg, &Egg::generateLarva, [=](){
+            Larva * larva = new Larva(":/assets/larva.png", this->mapCellInAnthill, 10, eggCoord , true, QColor(Qt::red));
+            larva->setZValue(2);
+            this->scene->addItem(larva);
+            connect(larva, &Larva::generateAnt, [=](){
+                Ant * ant = new Ant(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red));
+                ant->setZValue(3);
+                //change color of the ant
+                this->scene->addItem(ant);
+                ant->moveAnt();
+            });
+        });
+    });
+    queen->moveAnt();
 }
 
 void Map::on_playButton_clicked()
@@ -132,30 +195,24 @@ void Map::on_playButton_clicked()
     this->scene->setSceneRect(-10,-10,this->coord.x * caseSize + 20 , this->coord.y* caseSize+20);
 
     ui->widget->hide();
-    QPen myPen = QPen(Qt::red);
-    QLineF TopLine(scene->sceneRect().topLeft(), scene->sceneRect().topRight());
-    QLineF RightLine(scene->sceneRect().topRight(), scene->sceneRect().bottomRight());
-    QLineF BotLine(scene->sceneRect().bottomLeft(), scene->sceneRect().bottomLeft());
-    QLineF LeftLine(scene->sceneRect().topLeft(), scene->sceneRect().bottomLeft());
-    scene->addLine(TopLine,myPen);
-    scene->addLine(RightLine,myPen);
-    scene->addLine(BotLine,myPen);
-    scene->addLine(LeftLine,myPen);
 
 
-    generateCellDispo();
-
+    this->mapCellDispo = generateCellDispo(0,0,this->coord.x* caseSize, this->coord.y* caseSize, caseSize);
     generateObstacle();
-    generateFood();
+    this->mapMove.insert(this->mapCellDispo.begin(),this->mapCellDispo.end());//map will store free cells to move to
     generateAntHill();
+
+    generateIntialFood();
+    //generateFood();
     generateFloor();
 
-    Ant * ant = new Ant(this->mapCellDispo, this->coord.y);
-    ant->setZValue(2);
-    //ant->setPos(300,200);
-    this->scene->addItem(ant);
 
-    ant->moveAnt();
+
+    QTimer * antTimer = new QTimer(this);
+    connect(antTimer, &QTimer::timeout,[=](){
+           generateFood();
+    });
+    antTimer->start(3000);
 
 
 

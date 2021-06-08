@@ -8,5 +8,12 @@
         <file>assets/bedrock.png</file>
         <file>assets/ant.png</file>
         <file>assets/ant2.png</file>
+        <file>assets/queen.png</file>
+        <file>assets/queen2.png</file>
+        <file>assets/egg.gif</file>
+        <file>assets/egg2.png</file>
+        <file>assets/egg.png</file>
+        <file>assets/larva.png</file>
+        <file>assets/larva2.png</file>
     </qresource>
 </RCC>

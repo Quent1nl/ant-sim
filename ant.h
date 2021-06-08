@@ -6,10 +6,12 @@
 #include <windows.h>
 #include <QObject>
 #include <QTimer>
+#include <QPainter>
+#include <QtWidgets>
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
 #include <QSequentialAnimationGroup>
-#include <stack>
+
 #include <cmath>
 
 #include <cellule.h>
@@ -26,13 +28,15 @@ class Ant: public QObject, public QGraphicsPixmapItem
     Q_PROPERTY(qreal y READ y WRITE setY /*NOTIFY yChanged*/)
     Q_PROPERTY(qreal rotation READ rotation WRITE setRotation /*NOTIFY rotationChanged*/)
 public:
-    Ant();
-    Ant(std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne);
+    Ant(){};
+    Ant(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color);
+    Ant(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, bool isAnthill, QColor color);
     //Ant(const Ant &ant);
     ~Ant(){};
 
-    Coord getAdjacent();
+
     void moveAnt();
+    virtual void setAnimationGroup();
 
     std::map<Coord, Cellule*>::iterator cellIt;
 
@@ -43,32 +47,46 @@ public:
 
     const qreal &rotation() const;
     void setRotation(const qreal &newRotation);
-    void rotate(const qreal &end);
+    void rotate(const qreal &end, int duration);
+
+    QParallelAnimationGroup * group;
+    QPropertyAnimation * xAnimation;
+    QPropertyAnimation * yAnimation;
+    QPropertyAnimation * rotationAnimation;
+
+    const Coord &getNewCoord() const;
 
 private:
     std::map<Coord, Cellule*> mapCellDispo;//map each cells to a coord    
-    int nbLigne;    
+    int nbLigne;
+    int caseSize = 50;
+    bool isAnthill = false;
+    int idAnthill = 0;
 
+    QString antPng;
+    QString antPng2;
+    QPixmap antP;
+    QPixmap antP2;
+
+    Coord getAdjacent();
     Coord newCoord;
 
     int legPosition;
     void updatePixmap();
 
-    float scaleSize = 0.78;
+    float scaleSize = 0.4;
     qreal m_x;
     qreal m_y;
-    QPropertyAnimation * xAnimation;
-    QPropertyAnimation * yAnimation;
-    QPropertyAnimation * rotationAnimation;
 
 
     qreal m_rotation;
-    std::stack<int> stack; //top = 0 right = 1 bot = 2 left = 3
+
 signals:
 
 public slots :
     void setx(qreal newX);
     void setY(qreal newY);
+
 
 };
 
