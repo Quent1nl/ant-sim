@@ -12,7 +12,9 @@ SOURCES += \
     ant.cpp \
     anthill.cpp \
     cellule.cpp \
+    egg.cpp \
     food.cpp \
+    larva.cpp \
     main.cpp \
     map.cpp \
     obstacle.cpp \
@@ -24,7 +26,9 @@ HEADERS += \
     anthill.h \
     cellule.h \
     coordinates.h \
+    egg.h \
     food.h \
+    larva.h \
     map.h \
     obstacle.h \
     queen.h \

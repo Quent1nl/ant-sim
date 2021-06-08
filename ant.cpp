@@ -46,7 +46,7 @@ Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne
     antPng(antPng),    
     legPosition(0)
 {
-    this->scaleSize = 0.095;
+    this->scaleSize = 0.08;
     setx(anthillPos.x);
     setY(anthillPos.y);
     //color the ant
@@ -94,6 +94,12 @@ Coord Ant::getAdjacent() {
     // load them in to a list.
     std::list<int> l = {1,2,3,4};
     qreal angle = 200;
+
+//    if (coord->id % this->nbLigne == 0 && (this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize) != this->idAnthill){
+//        l.remove(2);
+//    } else if (coord->id % this->nbLigne == 1 && (this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize) != this->idAnthill){
+//        l.remove(1);
+//    }
     do {
         auto it = l.begin();
         auto newIt = std::next(it, (std::rand() % l.size())+1 );//select a random cell available
@@ -163,7 +169,12 @@ Coord Ant::getAdjacent() {
 
 }
 
-void Ant::moveAnt(){
+const Coord &Ant::getNewCoord() const
+{
+    return newCoord;
+}
+
+ void Ant::moveAnt(){
 
     this->newCoord = getAdjacent();
 
@@ -184,26 +195,33 @@ void Ant::moveAnt(){
     this->yAnimation->setDuration(2000);
     //this->yAnimation->start();
 
-    QParallelAnimationGroup * group = new QParallelAnimationGroup;
+    this->group = new QParallelAnimationGroup;
     group->addAnimation(this->xAnimation);
     group->addAnimation(this->yAnimation);
     //group->start();
 
-    QSequentialAnimationGroup *seqGroupe= new QSequentialAnimationGroup;
+    setAnimationGroup();
 
-    seqGroupe->addAnimation(this->rotationAnimation);
-    seqGroupe->addAnimation(group);
 
-    seqGroupe->start();
+ }
 
-    //std::cout<<"bx : "<<x()<<" y : "<<y()<<std::endl;
-    connect(seqGroupe,&QPropertyAnimation::finished,[=](){
+ void Ant::setAnimationGroup()
+ {
+     QSequentialAnimationGroup *seqGroupe= new QSequentialAnimationGroup;
 
-        //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
-        moveAnt();
+     seqGroupe->addAnimation(this->rotationAnimation);
+     seqGroupe->addAnimation(this->group);
 
-    });
-}
+     seqGroupe->start();
+
+     //std::cout<<"bx : "<<x()<<" y : "<<y()<<std::endl;
+     connect(seqGroupe,&QPropertyAnimation::finished,[=](){
+
+         //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
+         moveAnt();
+
+     });
+ }
 
 void Ant::updatePixmap()
 {

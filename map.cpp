@@ -143,37 +143,46 @@ void Map::generateAntHill()
     this->cellIt = this->mapCellDispo.begin();
     auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
 
-    Coord antHillCoord(newIt->first.x, newIt->first.y, newIt->first.id);
-    this->mapAntHill.insert(std::make_pair(antHillCoord, antHill));//insert the new antHill cell in the antHill map
+    this->antHillCoord.x = newIt->first.x; this->antHillCoord.y = newIt->first.y ; this->antHillCoord.id = newIt->first.id;
+    this->mapAntHill.insert(std::make_pair(this->antHillCoord, antHill));//insert the new antHill cell in the antHill map
     this->mapCellDispo.erase(newIt);//remove the cell from available cells
     antHill->setScale(imgSize);
-    antHill->setPos(antHillCoord.x,antHillCoord.y);
+    antHill->setPos(this->antHillCoord.x,this->antHillCoord.y);
     this->scene->addItem(antHill);
 
-    this->mapCellInAnthill = generateCellDispo(antHillCoord.x, antHillCoord.y,antHillCoord.x+caseSize,antHillCoord.y+caseSize,caseSize/10);
-    for (const auto &p : this->mapCellInAnthill)
-       {
-           std::cout << "x : " << p.first.x << std::endl // string (key)
-                     << "y : " << p.first.y << std::endl
-                     << "id : " << p.first.id << std::endl
-                     << ':'
-                     << p.second   // string's value
-                     << std::endl;
-       }
-    Queen * queen = new Queen(":/assets/queen.png",this->mapCellInAnthill, 10,antHillCoord, true, QColor(Qt::red));
+    this->mapCellInAnthill = generateCellDispo(this->antHillCoord.x, this->antHillCoord.y,this->antHillCoord.x+caseSize,this->antHillCoord.y+caseSize,caseSize/10);
+//    for (const auto &p : this->mapCellInAnthill)
+//       {
+//           std::cout << "x : " << p.first.x << std::endl // string (key)
+//                     << "y : " << p.first.y << std::endl
+//                     << "id : " << p.first.id << std::endl
+//                     << ':'
+//                     << p.second   // string's value
+//                     << std::endl;
+//       }
+    Queen * queen = new Queen(":/assets/queen.png",this->mapCellInAnthill, 10,this->antHillCoord, true, QColor(Qt::red));
     queen->setZValue(3);
-
     this->scene->addItem(queen);
 
-    Ant * ant = new Ant(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red));
-    ant->setZValue(3);
-    //change color of the ant
-
-
-    this->scene->addItem(ant);
-
+    connect(queen, &Queen::generateEgg, [=](){
+        eggCoord = queen->getNewCoord();
+        Egg * egg = new Egg(":/assets/egg.png", this->mapCellInAnthill, 10, eggCoord , true, QColor(Qt::red));
+        egg->setZValue(2);
+        this->scene->addItem(egg);
+        connect(egg, &Egg::generateLarva, [=](){
+            Larva * larva = new Larva(":/assets/larva.png", this->mapCellInAnthill, 10, eggCoord , true, QColor(Qt::red));
+            larva->setZValue(2);
+            this->scene->addItem(larva);
+            connect(larva, &Larva::generateAnt, [=](){
+                Ant * ant = new Ant(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red));
+                ant->setZValue(3);
+                //change color of the ant
+                this->scene->addItem(ant);
+                ant->moveAnt();
+            });
+        });
+    });
     queen->moveAnt();
-    ant->moveAnt();
 }
 
 void Map::on_playButton_clicked()
@@ -191,18 +200,21 @@ void Map::on_playButton_clicked()
     this->mapCellDispo = generateCellDispo(0,0,this->coord.x* caseSize, this->coord.y* caseSize, caseSize);
     generateObstacle();
     this->mapMove.insert(this->mapCellDispo.begin(),this->mapCellDispo.end());//map will store free cells to move to
-    generateAntHill();    
+    generateAntHill();
 
     generateIntialFood();
     //generateFood();
     generateFloor();
 
 
+
     QTimer * antTimer = new QTimer(this);
     connect(antTimer, &QTimer::timeout,[=](){
            generateFood();
     });
-    antTimer->start(5000);
+    antTimer->start(3000);
+
+
 
 }
 

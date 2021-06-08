@@ -34,8 +34,9 @@ public:
     //Ant(const Ant &ant);
     ~Ant(){};
 
-    Coord getAdjacent();
+
     void moveAnt();
+    virtual void setAnimationGroup();
 
     std::map<Coord, Cellule*>::iterator cellIt;
 
@@ -47,6 +48,13 @@ public:
     const qreal &rotation() const;
     void setRotation(const qreal &newRotation);
     void rotate(const qreal &end, int duration);
+
+    QParallelAnimationGroup * group;
+    QPropertyAnimation * xAnimation;
+    QPropertyAnimation * yAnimation;
+    QPropertyAnimation * rotationAnimation;
+
+    const Coord &getNewCoord() const;
 
 private:
     std::map<Coord, Cellule*> mapCellDispo;//map each cells to a coord    
@@ -60,6 +68,7 @@ private:
     QPixmap antP;
     QPixmap antP2;
 
+    Coord getAdjacent();
     Coord newCoord;
 
     int legPosition;
@@ -68,9 +77,6 @@ private:
     float scaleSize = 0.4;
     qreal m_x;
     qreal m_y;
-    QPropertyAnimation * xAnimation;
-    QPropertyAnimation * yAnimation;
-    QPropertyAnimation * rotationAnimation;
 
 
     qreal m_rotation;
@@ -80,6 +86,7 @@ signals:
 public slots :
     void setx(qreal newX);
     void setY(qreal newY);
+
 
 };
 

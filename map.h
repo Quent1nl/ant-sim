@@ -13,6 +13,8 @@
 #include <anthill.h>
 #include <ant.h>
 #include <coordinates.h>
+#include <egg.h>
+#include <larva.h>
 
 namespace Ui {
 class Map;
@@ -44,7 +46,8 @@ private:
     const int obstacleSize = 100;
     const float imgSize = 0.4f;//scale png
     Coord coord;
-
+    Coord antHillCoord;
+    Coord eggCoord;
 
     std::map<Coord, Cellule*> mapCellDispo; //map each cells to a coord
     std::map<Coord, Cellule*>::iterator cellIt;

@@ -4,3 +4,24 @@ Queen::Queen(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLi
 {
 
 }
+
+void Queen::setAnimationGroup()
+{
+    QSequentialAnimationGroup *seqGroupe= new QSequentialAnimationGroup;
+
+    seqGroupe->addAnimation(this->rotationAnimation);
+    seqGroupe->addAnimation(this->group);
+
+    seqGroupe->start();
+
+    //std::cout<<"bx : "<<x()<<" y : "<<y()<<std::endl;
+    connect(seqGroupe,&QPropertyAnimation::finished,[=](){
+        if (this->newEgg++ == 5){
+            this->newEgg = 0;
+            emit generateEgg();
+        }
+        //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
+        moveAnt();
+
+    });
+}
