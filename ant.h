@@ -43,6 +43,8 @@ public:
     qreal x() const;
     qreal y() const;
 
+    qreal m_x;
+    qreal m_y;
 
 
     const qreal &rotation() const;
@@ -55,6 +57,10 @@ public:
     QPropertyAnimation * rotationAnimation;
 
     const Coord &getNewCoord() const;
+
+    void setAntP(const QPixmap &newAntP, QColor color);
+
+    void setAntP2(const QPixmap &newAntP2, QColor color);
 
 private:
     std::map<Coord, Cellule*> mapCellDispo;//map each cells to a coord    
@@ -75,8 +81,7 @@ private:
     void updatePixmap();
 
     float scaleSize = 0.4;
-    qreal m_x;
-    qreal m_y;
+
 
 
     qreal m_rotation;
@@ -84,8 +89,8 @@ private:
 signals:
 
 public slots :
-    void setx(qreal newX);
-    void setY(qreal newY);
+    virtual void setx(qreal newX);
+    virtual void setY(qreal newY);
 
 
 };

@@ -15,5 +15,6 @@
         <file>assets/egg.png</file>
         <file>assets/larva.png</file>
         <file>assets/larva2.png</file>
+        <file>assets/tombstone.png</file>
     </qresource>
 </RCC>

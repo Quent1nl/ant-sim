@@ -15,6 +15,7 @@
 #include <coordinates.h>
 #include <egg.h>
 #include <larva.h>
+#include <warrior.h>
 
 namespace Ui {
 class Map;
@@ -62,7 +63,7 @@ private:
     std::map<Coord, AntHill*>::iterator antHillIt; //map each AntHill to a coord
     std::map<Coord, Cellule*> mapCellInAnthill; //map each cells to a coord
 
-    std::map<Ant*, AntHill*> mapAnt; //map each ant to a anthill
+    std::map<Warrior*, AntHill*> mapAnt; //map each warrior to a anthill
 };
 
 #endif // MAP_H

@@ -13,7 +13,7 @@ Food::Food() :
     this->foodAnimation->setStartValue(0);
     this->foodAnimation->setEndValue(5);
     //this->xAnimation->setEasingCurve(QEasingCurve::InQuad);
-    this->foodAnimation->setDuration(15000);
+    this->foodAnimation->setDuration(25000);
 
     connect(this->foodAnimation,&QPropertyAnimation::finished,[=](){
         scene()->removeItem(this);
@@ -23,7 +23,7 @@ Food::Food() :
 }
 
 Food::~Food(){
-    qDebug() << "Deleted food";
+    //qDebug() << "Deleted food";
 }
 
 int Food::lifeTime() const

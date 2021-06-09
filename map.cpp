@@ -119,7 +119,7 @@ void Map::generateFood()
             }
             break_me:
                 delete food;
-                std::cout<<"food taken"<<std::endl;
+//                std::cout<<"food taken"<<std::endl;
         });
         this->scene->addItem(food);
 
@@ -174,15 +174,44 @@ void Map::generateAntHill()
             larva->setZValue(2);
             this->scene->addItem(larva);
             connect(larva, &Larva::generateAnt, [=](){
-                Ant * ant = new Ant(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red));
-                ant->setZValue(3);
+                Warrior * warrior = new Warrior(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red));
+                warrior->setZValue(3);
                 //change color of the ant
-                this->scene->addItem(ant);
-                ant->moveAnt();
+                this->scene->addItem(warrior);
+                warrior->moveAnt();
+
+                //map each warrior to its anthill
+                this->mapAnt.insert(std::make_pair(warrior,antHill));
+                connect(warrior, &Warrior::warriorDead, [=](){
+                    auto it = this->mapAnt.find(warrior);
+                    //map each warrior to its anthill
+                    this->mapAnt.erase(it);
+                });
             });
+
         });
     });
     queen->moveAnt();
+
+
+    QTimer * antTimer = new QTimer(this);
+    connect(antTimer, &QTimer::timeout,[=](){
+        if (this->mapAnt.size()){
+            float lifeMoyenne = 0;
+            for (const auto &p : this->mapAnt)
+            {
+                lifeMoyenne += p.first->getLife();
+                //std::cout<<"moyenne life"<<lifeMoyenne<<std::endl;
+            }
+            lifeMoyenne = lifeMoyenne / (this->mapAnt.size()*20);
+            std::cout<<"moyenne life"<<lifeMoyenne<<std::endl;
+            antHill->updateLife(lifeMoyenne);
+        }
+
+    });
+    antTimer->start(800);
+
+
 }
 
 void Map::on_playButton_clicked()
@@ -212,7 +241,7 @@ void Map::on_playButton_clicked()
     connect(antTimer, &QTimer::timeout,[=](){
            generateFood();
     });
-    antTimer->start(3000);
+    antTimer->start(1500);
 
 
 

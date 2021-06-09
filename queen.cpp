@@ -16,6 +16,7 @@ void Queen::setAnimationGroup()
 
     //std::cout<<"bx : "<<x()<<" y : "<<y()<<std::endl;
     connect(seqGroupe,&QPropertyAnimation::finished,[=](){
+        //std::cout<<"egg: "<<this->newEgg<<std::endl;
         if (this->newEgg++ == 5){
             this->newEgg = 0;
             emit generateEgg();

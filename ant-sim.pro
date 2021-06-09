@@ -19,7 +19,8 @@ SOURCES += \
     map.cpp \
     obstacle.cpp \
     queen.cpp \
-    scene.cpp
+    scene.cpp \
+    warrior.cpp
 
 HEADERS += \
     ant.h \
@@ -32,7 +33,8 @@ HEADERS += \
     map.h \
     obstacle.h \
     queen.h \
-    scene.h
+    scene.h \
+    warrior.h
 
 FORMS += \
     map.ui

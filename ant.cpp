@@ -51,22 +51,8 @@ Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne
     setY(anthillPos.y);
     //color the ant
     this->antPng2 = this->antPng.left(this->antPng.lastIndexOf('.')) + "2.png";
-    this->antP = QPixmap(antPng);
-    auto mask = this->antP.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
-    QPainter p (&this->antP);
-    p.setPen(color);
-    p.drawPixmap(this->antP.rect(), mask, mask.rect());
-    p.end();
-
-
-
-    this->antP2 = QPixmap(this->antPng2);
-    auto mask2 = this->antP2.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
-    QPainter p2 (&this->antP2);
-    p2.setPen(color);
-    p2.drawPixmap(this->antP2.rect(), mask2, mask2.rect());
-    p2.end();
-
+    setAntP(QPixmap(this->antPng), color);
+    setAntP2(QPixmap(this->antPng2), color);
     setPixmap(this->antP);
     this->setScale(scaleSize);
 
@@ -86,9 +72,9 @@ Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne
 Coord Ant::getAdjacent() {
 
     Coord * coord = new Coord(x(),y(),(this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize) - this->idAnthill);
-    std::cout<<"current coord x:"<<coord->x<<" coord y:"<<coord->y<<" id: "<<coord->id<<std::endl;
+    //std::cout<<"current coord x:"<<coord->x<<" coord y:"<<coord->y<<" id: "<<coord->id<<std::endl;
     this->cellIt = this->mapCellDispo.find(*coord);
-    std::cout<< "Coord de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+    //std::cout<< "Coord de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
     Coord co;
     bool foundKey = false;
     // load them in to a list.
@@ -112,7 +98,7 @@ Coord Ant::getAdjacent() {
                 foundKey = true;
 
                 angle = 0;
-                std::cout<< "case en haut de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+                //std::cout<< "case en haut de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
 
             break;
@@ -125,7 +111,7 @@ Coord Ant::getAdjacent() {
                 foundKey = true;
 
                  angle = 180;
-                std::cout<< "case en bas de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+                //std::cout<< "case en bas de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
             break;
 
@@ -136,7 +122,7 @@ Coord Ant::getAdjacent() {
                 this->cellIt = this->mapCellDispo.find(co);
                 foundKey = true;
                 angle = -90;
-                std::cout<< "case a gauche de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+                //std::cout<< "case a gauche de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
             break;
 
@@ -147,7 +133,7 @@ Coord Ant::getAdjacent() {
                 this->cellIt = this->mapCellDispo.find(co);
                 foundKey = true;
                 angle = 90;
-                std::cout<< "case a droite de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+                //std::cout<< "case a droite de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
             break;
         }
@@ -172,6 +158,26 @@ Coord Ant::getAdjacent() {
 const Coord &Ant::getNewCoord() const
 {
     return newCoord;
+}
+
+void Ant::setAntP(const QPixmap &newAntP, QColor color)
+{
+    this->antP = newAntP;
+    auto mask = this->antP.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
+    QPainter p (&this->antP);
+    p.setPen(color);
+    p.drawPixmap(this->antP.rect(), mask, mask.rect());
+    p.end();
+}
+
+void Ant::setAntP2(const QPixmap &newAntP2, QColor color)
+{
+    this->antP2 = newAntP2;
+    auto mask2 = this->antP2.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
+    QPainter p2 (&this->antP2);
+    p2.setPen(color);
+    p2.drawPixmap(this->antP2.rect(), mask2, mask2.rect());
+    p2.end();
 }
 
  void Ant::moveAnt(){
@@ -286,7 +292,7 @@ void Ant::setRotation(const qreal &newRotation)
 void Ant::rotate(const qreal &end, int duration )
 {
     this->rotationAnimation = new QPropertyAnimation(this, "rotation",this);
-    std::cout<<" rotation :"<<rotation()<<std::endl;
+    //std::cout<<" rotation :"<<rotation()<<std::endl;
     this->rotationAnimation->setStartValue(rotation());
     this->rotationAnimation->setEndValue(end);
     //this->rotationAnimation->setEasingCurve(QEasingCurve::Linear);
