@@ -58,7 +58,7 @@ Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne
 
     if(this->isAnthill) {
         this->caseSize = 5;
-        this->idAnthill = (this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize);
+        this->idAnthill = (this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize) - 1;
     }
     QTimer * antTimer = new QTimer(this);
     connect(antTimer, &QTimer::timeout,[=](){
@@ -81,14 +81,15 @@ Coord Ant::getAdjacent() {
     std::list<int> l = {1,2,3,4};
     qreal angle = 200;
 
-//    if (coord->id % this->nbLigne == 0 && (this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize) != this->idAnthill){
-//        l.remove(2);
-//    } else if (coord->id % this->nbLigne == 1 && (this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize) != this->idAnthill){
-//        l.remove(1);
-//    }
+    if (coord->id % this->nbLigne == 0 /*&& (this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize) != this->idAnthill*/){
+        l.remove(2);
+    } else if (coord->id % this->nbLigne == 1){
+        l.remove(1);
+    }
     do {
         auto it = l.begin();
-        auto newIt = std::next(it, (std::rand() % l.size())+1 );//select a random cell available
+        auto newIt = std::next(it, (std::rand() % l.size()) );//select a random cell available
+        //std::cout<<"random "<< *newIt<<std::endl;
         switch(*newIt){
         case 1:
             l.remove(*newIt);

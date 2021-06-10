@@ -6,7 +6,7 @@
 Food::Food() :
     centerElipse(new QGraphicsEllipseItem(50,50,40,40,this))
 {
-
+    centerElipse->setPen(Qt::NoPen);
     setPixmap(QPixmap(":/assets/food.png"));
     this->setZValue(2);
     this->foodAnimation = new QPropertyAnimation(this, "lifeTime", this);
@@ -16,6 +16,8 @@ Food::Food() :
     this->foodAnimation->setDuration(25000);
 
     connect(this->foodAnimation,&QPropertyAnimation::finished,[=](){
+        emit takeFood();
+        //std::cout<<"food expired"<<std::endl;
         scene()->removeItem(this);
         delete this;
     });
@@ -33,7 +35,11 @@ int Food::lifeTime() const
 
 void Food::setLifeTime(int newLifeTime)
 {
-    if (collideWithAnt()) emit takeFood();
+    if (collideWithAnt()){
+        emit takeFood();
+        scene()->removeItem(this);
+        delete this;
+    }
     m_lifeTime = newLifeTime;
 }
 

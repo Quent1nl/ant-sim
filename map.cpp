@@ -24,11 +24,11 @@ std::map<Coord, Cellule*> Map::generateCellDispo(int xStart, int yStart, int xEn
 {
     std::map<Coord, Cellule*> tempMap;
     QPixmap dirt = QPixmap(":/assets/dirt.png");
-    int id = 0;
+    int id = 1;
     for (int x= xStart; x< xEnd; x+= newCaseSize){
         for (int y= yStart; y< yEnd; y+= newCaseSize){
             Cellule* cellule = new Cellule(dirt);
-            tempMap.insert(std::make_pair(Coord(x, y, ++id), cellule));
+            tempMap.insert(std::make_pair(Coord(x, y, id++), cellule));
         }
     }
     return tempMap;
@@ -93,35 +93,39 @@ void Map::generateIntialFood()
 void Map::generateFood()
 {
     //food
+        if (this->mapCellDispo.size()!=0){
+            Food* food = new Food();
+            this->cellIt = this->mapCellDispo.begin();
+            auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
+            //std::cout<<"d:"<<newIt->first.id<<std::endl;
+            this->mapFood.insert(std::make_pair(newIt->first, food));//insert the new food cell in the food map
+            this->mapCellDispo.erase(newIt);//remove the cell from available cells
+            food->setScale(imgSize);
+            food->setPos(newIt->first.x,newIt->first.y);
+            this->scene->addItem(food);
+            connect(food, &Food::takeFood, [=](){
 
-        Food* food = new Food();
-        this->cellIt = this->mapCellDispo.begin();
-        auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
-        //std::cout<<"d:"<<newIt->first.id<<std::endl;
-        this->mapFood.insert(std::make_pair(newIt->first, food));//insert the new food cell in the food map
-        this->mapCellDispo.erase(newIt);//remove the cell from available cells
-        food->setScale(imgSize);
-        food->setPos(newIt->first.x,newIt->first.y);
-
-        connect(food, &Food::takeFood, [=](){
-            this->scene->removeItem(food);
-            //nested loop because we need to repopulate the mapCellDispo map, freeing the cell for the next food generation
-            for (auto itr = this->mapFood.begin(); itr != this->mapFood.end(); ++itr) {
-                if (itr->second == food){
-                    for (auto it = this->mapCellDispo.begin(); it != this->mapCellDispo.end(); ++it) {
-                        if (it->first == itr->first){
-                            this->mapCellDispo.insert(std::make_pair(itr->first,it->second));
-                            this->mapFood.erase(itr);
-                            goto break_me;
+                //this->scene->removeItem(food);
+                //nested loop because we need to repopulate the mapCellDispo map, freeing the cell for the next food generation
+                for (auto itr = this->mapFood.begin(); itr != this->mapFood.end(); ++itr) {
+                    if (itr->second == food){
+                        for (auto it = this->mapMove.begin(); it != this->mapMove.end(); ++it) {
+                            if (it->first.id == itr->first.id){
+                                //std::cout<<"delete food"<<std::endl;
+                                this->mapCellDispo.insert(std::make_pair(itr->first,it->second));
+                                this->mapFood.erase(itr);
+                                goto break_me;
+                            }
                         }
                     }
                 }
-            }
-            break_me:
-                delete food;
-//                std::cout<<"food taken"<<std::endl;
-        });
-        this->scene->addItem(food);
+            break_me:;
+
+    //                std::cout<<"food taken"<<std::endl;
+            });
+
+        }
+
 
 
 }
@@ -204,7 +208,7 @@ void Map::generateAntHill()
                 //std::cout<<"moyenne life"<<lifeMoyenne<<std::endl;
             }
             lifeMoyenne = lifeMoyenne / (this->mapAnt.size()*20);
-            std::cout<<"moyenne life"<<lifeMoyenne<<std::endl;
+            //std::cout<<"moyenne life"<<lifeMoyenne<<std::endl;
             antHill->updateLife(lifeMoyenne);
         }
 
