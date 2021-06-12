@@ -179,35 +179,21 @@ void Map::generateAntHill()
             larva->setZValue(2);
             this->scene->addItem(larva);
             connect(larva, &Larva::generateAnt, [=](){
-                if (std::rand()%101 > this->queenSpawnRate){
-                    Warrior * warrior = new Warrior(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red));
-                    warrior->setZValue(3);
-                    //change color of the ant
-                    this->scene->addItem(warrior);
-                    warrior->moveAnt();
 
+                Warrior * warrior = new Warrior(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red));
+                warrior->setZValue(3);
+                //change color of the ant
+                this->scene->addItem(warrior);
+                warrior->moveAnt();
+
+                //map each warrior to its anthill
+                this->mapAnt.insert(std::make_pair(warrior,antHill));
+                connect(warrior, &Warrior::warriorDead, [=](){
+                    auto it = this->mapAnt.find(warrior);
                     //map each warrior to its anthill
-                    this->mapAnt.insert(std::make_pair(warrior,antHill));
-                    connect(warrior, &Warrior::warriorDead, [=](){
-                        auto it = this->mapAnt.find(warrior);
-                        //map each warrior to its anthill
-                        this->mapAnt.erase(it);
-                    });
-                }else {
-                    Queen * newQueen = new Queen(":/assets/queen.png",this->mapMove, this->coord.y,this->antHillCoord, QColor(Qt::blue));
-                    newQueen->setZValue(3);
-                    this->scene->addItem(newQueen);
-                    newQueen->moveAnt();
+                    this->mapAnt.erase(it);
+                });
 
-                    connect(newQueen, &Queen::generateAnthill, [=](){
-//                        auto it = this->mapAnt.find(newQueen);
-//                        //map each warrior to its anthill
-//                        this->mapAnt.erase(it);
-                        std::cout<<"new anthill"<<std::endl;
-
-                        //generateAntHill();
-                    });
-                }
 
             });
 
@@ -263,7 +249,7 @@ void Map::on_playButton_clicked()
     connect(antTimer, &QTimer::timeout,[=](){
            generateFood();
     });
-    antTimer->start(1500 * (foodRate + 1));
+    antTimer->start(1500 / (foodRate + 1));
 
 
 

@@ -16,20 +16,15 @@ void Queen::setAnimationGroup()
     //std::cout<<"bx : "<<x()<<" y : "<<y()<<std::endl;
     connect(seqGroupe,&QPropertyAnimation::finished,[=](){
         //std::cout<<"egg: "<<this->newEgg<<std::endl;
-        if (isAnthill && this->newEgg++ == 5){
+        if (this->newEgg++ == 5){
 
             this->newEgg = 0;
             emit generateEgg();
             moveAnt();
 
-        }else if(!isAnthill && this->newEgg++ ==3){
-            this->newEgg = 0;
-            emit generateAnthill();
-            scene()->removeItem(this);
-            delete this;
-        } else{
-            moveAnt();
         }
+            moveAnt();
+
 
         //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
 

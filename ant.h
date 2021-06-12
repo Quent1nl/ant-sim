@@ -56,7 +56,7 @@ public:
     QPropertyAnimation * yAnimation;
     QPropertyAnimation * rotationAnimation;
 
-    bool isAnthill = false;
+
 
     const Coord &getNewCoord() const;
 
@@ -70,6 +70,7 @@ private:
     int caseSize = 50;
 
     int idAnthill = 0;
+    bool isAnthill = false;
 
     QString antPng;
     QString antPng2;

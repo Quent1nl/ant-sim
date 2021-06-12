@@ -18,7 +18,6 @@ private:
 
 signals:
     void generateEgg() ;
-    void generateAnthill();
 
 };
 
