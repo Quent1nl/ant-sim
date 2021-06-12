@@ -11,23 +11,10 @@ Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne
 {
     setx(anthillPos.x);
     setY(anthillPos.y);
-
     //color the ant
     this->antPng2 = this->antPng.left(this->antPng.lastIndexOf('.')) + "2.png";
-    this->antP = QPixmap(antPng);
-    auto mask = this->antP.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
-    QPainter p (&this->antP);
-    p.setPen(color);
-    p.drawPixmap(this->antP.rect(), mask, mask.rect());
-    p.end();
-
-    this->antP2 = QPixmap(this->antPng2);
-    auto mask2 = this->antP2.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
-    QPainter p2 (&this->antP2);
-    p2.setPen(color);
-    p2.drawPixmap(this->antP2.rect(), mask2, mask2.rect());
-    p2.end();
-
+    setAntP(QPixmap(this->antPng), color);
+    setAntP2(QPixmap(this->antPng2), color);
     setPixmap(this->antP);
     this->setScale(scaleSize);
 

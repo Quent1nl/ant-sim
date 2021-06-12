@@ -81,9 +81,9 @@ void Map::generateObstacle()
     }
 }
 
-void Map::generateIntialFood()
+void Map::generateIntialFood(int foodRate)
 {
-    for (int i = 1; i <= std::round(std::sqrt(this->coord.x * this->coord.y)); i++ ) //nombre de nourriture max
+    for (int i = 1; i <= std::round((this->coord.x * this->coord.y)/10) * (foodRate+1); i++ ) //nombre de nourriture max
     {
         generateFood();
     }
@@ -144,6 +144,7 @@ void Map::generateFloor()
 void Map::generateAntHill()
 {
     AntHill* antHill = new AntHill();
+    antHill->setZValue(2);
     this->cellIt = this->mapCellDispo.begin();
     auto newIt = std::next(this->cellIt, std::rand() % this->mapCellDispo.size() );//select a random cell available
 
@@ -167,7 +168,7 @@ void Map::generateAntHill()
     Queen * queen = new Queen(":/assets/queen.png",this->mapCellInAnthill, 10,this->antHillCoord, true, QColor(Qt::red));
     queen->setZValue(3);
     this->scene->addItem(queen);
-
+    queen->moveAnt();
     connect(queen, &Queen::generateEgg, [=](){
         eggCoord = queen->getNewCoord();
         Egg * egg = new Egg(":/assets/egg.png", this->mapCellInAnthill, 10, eggCoord , true, QColor(Qt::red));
@@ -178,24 +179,41 @@ void Map::generateAntHill()
             larva->setZValue(2);
             this->scene->addItem(larva);
             connect(larva, &Larva::generateAnt, [=](){
-                Warrior * warrior = new Warrior(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red));
-                warrior->setZValue(3);
-                //change color of the ant
-                this->scene->addItem(warrior);
-                warrior->moveAnt();
+                if (std::rand()%101 > this->queenSpawnRate){
+                    Warrior * warrior = new Warrior(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red));
+                    warrior->setZValue(3);
+                    //change color of the ant
+                    this->scene->addItem(warrior);
+                    warrior->moveAnt();
 
-                //map each warrior to its anthill
-                this->mapAnt.insert(std::make_pair(warrior,antHill));
-                connect(warrior, &Warrior::warriorDead, [=](){
-                    auto it = this->mapAnt.find(warrior);
                     //map each warrior to its anthill
-                    this->mapAnt.erase(it);
-                });
+                    this->mapAnt.insert(std::make_pair(warrior,antHill));
+                    connect(warrior, &Warrior::warriorDead, [=](){
+                        auto it = this->mapAnt.find(warrior);
+                        //map each warrior to its anthill
+                        this->mapAnt.erase(it);
+                    });
+                }else {
+                    Queen * newQueen = new Queen(":/assets/queen.png",this->mapMove, this->coord.y,this->antHillCoord, QColor(Qt::blue));
+                    newQueen->setZValue(3);
+                    this->scene->addItem(newQueen);
+                    newQueen->moveAnt();
+
+                    connect(newQueen, &Queen::generateAnthill, [=](){
+//                        auto it = this->mapAnt.find(newQueen);
+//                        //map each warrior to its anthill
+//                        this->mapAnt.erase(it);
+                        std::cout<<"new anthill"<<std::endl;
+
+                        //generateAntHill();
+                    });
+                }
+
             });
 
         });
     });
-    queen->moveAnt();
+
 
 
     QTimer * antTimer = new QTimer(this);
@@ -228,14 +246,14 @@ void Map::on_playButton_clicked()
     this->scene->setSceneRect(-10,-10,this->coord.x * caseSize + 20 , this->coord.y* caseSize+20);
 
     ui->widget->hide();
-
+    int foodRate = ui->inputFood->currentIndex();
 
     this->mapCellDispo = generateCellDispo(0,0,this->coord.x* caseSize, this->coord.y* caseSize, caseSize);
     generateObstacle();
     this->mapMove.insert(this->mapCellDispo.begin(),this->mapCellDispo.end());//map will store free cells to move to
     generateAntHill();
 
-    generateIntialFood();
+    generateIntialFood(foodRate);
     //generateFood();
     generateFloor();
 
@@ -245,9 +263,12 @@ void Map::on_playButton_clicked()
     connect(antTimer, &QTimer::timeout,[=](){
            generateFood();
     });
-    antTimer->start(1500);
+    antTimer->start(1500 * (foodRate + 1));
 
 
 
 }
+
+
+
 

@@ -56,6 +56,8 @@ public:
     QPropertyAnimation * yAnimation;
     QPropertyAnimation * rotationAnimation;
 
+    bool isAnthill = false;
+
     const Coord &getNewCoord() const;
 
     void setAntP(const QPixmap &newAntP, QColor color);
@@ -66,7 +68,7 @@ private:
     std::map<Coord, Cellule*> mapCellDispo;//map each cells to a coord    
     int nbLigne;
     int caseSize = 50;
-    bool isAnthill = false;
+
     int idAnthill = 0;
 
     QString antPng;

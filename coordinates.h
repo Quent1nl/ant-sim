@@ -1,7 +1,7 @@
 #ifndef COORDINATES_H
 #define COORDINATES_H
 struct Coord{
-    float x=30, y=15;
+    float x=100, y=50;
     int id = 0;
     Coord(){};
     Coord(float x, float y, float id) : x(x), y(y), id(id) {};

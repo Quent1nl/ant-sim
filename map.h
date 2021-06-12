@@ -31,13 +31,14 @@ public:
 
     std::map<Coord, Cellule*> generateCellDispo(int xStart, int yStart, int xEnd, int yEnd, int newCaseSize);
     void generateObstacle();
-    void generateIntialFood();
+    void generateIntialFood(int foodRate);
     void generateFood();
     void generateFloor();
     void generateAntHill();
 
 private slots:
     void on_playButton_clicked();
+
 
 private:
     Ui::Map *ui;
@@ -46,6 +47,9 @@ private:
     const int caseSize =  50;
     const int obstacleSize = 100;
     const float imgSize = 0.4f;//scale png
+
+    int queenSpawnRate = 0;
+
     Coord coord;
     Coord antHillCoord;
     Coord eggCoord;
