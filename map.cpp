@@ -263,7 +263,7 @@ void Map::on_playButton_clicked()
     connect(antTimer, &QTimer::timeout,[=](){
            generateFood();
     });
-    antTimer->start(1500 * (foodRate + 1));
+    antTimer->start(1500 / (foodRate + 1));
 
 
 
