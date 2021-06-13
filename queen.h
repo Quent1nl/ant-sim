@@ -17,8 +17,7 @@ private:
     int newEgg = 0;
 
 signals:
-    void generateEgg() ;
-
+    void generateEgg();
 };
 
 #endif // QUEEN_H

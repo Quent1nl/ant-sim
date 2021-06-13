@@ -23,7 +23,7 @@ void Queen::setAnimationGroup()
             moveAnt();
 
         }
-            moveAnt();
+        moveAnt();
 
 
         //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;

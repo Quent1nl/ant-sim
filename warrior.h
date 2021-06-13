@@ -19,19 +19,22 @@ public:
 
     int rip() const;
     void setRip(int newRip);
-
+    void moveAnt() override;
 private:
     int life = 10;
-
+    int nbLine = 0;
     bool collideWithFood();
+    bool seeFood();
 
     void setx(qreal newX) override;
     void setY(qreal newY) override;
 
     int m_rip;
 
+
     QPropertyAnimation * ripAnimation;
 
+    QGraphicsEllipseItem * centerElipse;
 signals:
     void warriorDead();
 };

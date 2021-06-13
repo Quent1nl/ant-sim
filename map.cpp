@@ -169,9 +169,13 @@ void Map::generateAntHill()
     queen->setZValue(3);
     this->scene->addItem(queen);
     queen->moveAnt();
+
+
     connect(queen, &Queen::generateEgg, [=](){
         eggCoord = queen->getNewCoord();
         Egg * egg = new Egg(":/assets/egg.png", this->mapCellInAnthill, 10, eggCoord , true, QColor(Qt::red));
+        antHill->setLifeAnthill(-15);
+        antHill->updateBotLife();
         egg->setZValue(2);
         this->scene->addItem(egg);
         connect(egg, &Egg::generateLarva, [=](){
@@ -193,7 +197,6 @@ void Map::generateAntHill()
                     //map each warrior to its anthill
                     this->mapAnt.erase(it);
                 });
-
 
             });
 

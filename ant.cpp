@@ -5,8 +5,8 @@
 
 Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color) :
     mapCellDispo(_mapCellDispo),
-    nbLigne(_nbLigne),
     antPng(antPng),
+    nbLigne(_nbLigne),    
     legPosition(0)
 {
     setx(anthillPos.x);
@@ -27,10 +27,10 @@ Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne
 }
 
 Ant::Ant(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos, bool _isAnthill, QColor color):
-    mapCellDispo(_mapCellDispo),
-    nbLigne(_nbLigne),
+    mapCellDispo(_mapCellDispo),    
     isAnthill(_isAnthill),
-    antPng(antPng),    
+    antPng(antPng),
+    nbLigne(_nbLigne),
     legPosition(0)
 {
     this->scaleSize = 0.08;
