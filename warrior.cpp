@@ -1,7 +1,7 @@
 #include "warrior.h"
 
 Warrior::Warrior(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color) : Ant(antPng, _mapCellDispo, _nbLigne, anthillPos, color),
-  nbLine(_nbLigne), centerElipse(new QGraphicsEllipseItem(-35,-45,200,200,this))
+  nbLine(_nbLigne), centerElipse(new QGraphicsEllipseItem(-110,-110,350,350,this))
 {
     //centerElipse->setPen(Qt::red);
 }
@@ -37,6 +37,8 @@ void Warrior::setAnimationGroup()
 
         }else{
             //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
+
+            if (!this->gotFood) insertPheromone();
             moveAnt();
         }
 
@@ -61,7 +63,10 @@ bool Warrior::collideWithFood()
 
     foreach (QGraphicsItem * item, collidingFood){
         Food * foodItem = dynamic_cast<Food*>(item);
-        if(foodItem) return true;
+        if(foodItem) {
+            this->gotFood = true;
+            return true;
+        }
     }
     return false;
 }
@@ -74,6 +79,7 @@ bool Warrior::seeFood()
         Food * seeFoodItem = dynamic_cast<Food*>(item);
 
         if(seeFoodItem){
+            std::cout<<"see food"<<std::endl;
             //std::cout<<seeFoodItem->pos().x()<<" "<<seeFoodItem->pos().y()<<std::endl;
             this->newCoord.x = seeFoodItem->pos().x();
             this->newCoord.y = seeFoodItem->pos().y();
@@ -83,6 +89,46 @@ bool Warrior::seeFood()
     }
     return false;
 }
+
+bool Warrior::seePheromone()
+{
+    QList<QGraphicsItem*> seePheromone = centerElipse->collidingItems();
+
+    foreach (QGraphicsItem * item, seePheromone){
+        Pheromone * seePheromoneItem = dynamic_cast<Pheromone*>(item);
+
+        if(seePheromoneItem && seePheromoneItem->pos().x()-22!= x() && seePheromoneItem->pos().y()-22!= y()  ){ //for current pheromones
+            std::cout<<"coord"<< seePheromoneItem->pos().x()-22<< " "<<x()<<" " <<seePheromoneItem->pos().y()-22<<" "<<y()<<std::endl;
+            std::cout<<"see phero"<<std::endl;
+            this->newCoord.x = seePheromoneItem->pos().x()-22;
+            this->newCoord.y = seePheromoneItem->pos().y()-22;
+            this->newCoord.id = (this->nbLine * (this->newCoord.x/50)) + 1 + (this->newCoord.y/50);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Warrior::seeAnthill()
+{
+    QList<QGraphicsItem*> seeAnthill = centerElipse->collidingItems();
+
+    foreach (QGraphicsItem * item, seeAnthill){
+        AntHill * seeAnthillItem = dynamic_cast<AntHill*>(item);
+
+        if(seeAnthillItem){
+            std::cout<<"see anthill"<<std::endl;
+            this->newCoord.x = seeAnthillItem->pos().x();
+            this->newCoord.y = seeAnthillItem->pos().y();
+            this->newCoord.id = (this->nbLine * (this->newCoord.x/50)) + 1 + (this->newCoord.y/50);
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
 
 
 void Warrior::setx(qreal newX)
@@ -102,6 +148,23 @@ void Warrior::setY(qreal newY)
     //std::cout<<"setter m_y : "<<this->m_y<<std::endl;
 }
 
+void Warrior::setGotFood(bool state)
+{
+    this->gotFood = state;
+}
+
+bool Warrior::getGotFood() const
+{
+    return gotFood;
+}
+
+void Warrior::insertPheromone()
+{
+    Pheromone * pheromone = new Pheromone();
+    pheromone->setPos(this->x()+22, this->y()+22);
+    scene()->addItem(pheromone);
+}
+
 int Warrior::rip() const
 {
     return m_rip;
@@ -113,10 +176,17 @@ void Warrior::setRip(int newRip)
 }
 
 void Warrior::moveAnt(){
-   if (!seeFood()){
-       this->newCoord = getAdjacent();
-   }
-   else {
+    if ((!this->gotFood && !seeFood()) || (this->gotFood && !seePheromone() && !seeAnthill() && !seeFood()) ) this->newCoord = getAdjacent();
+    else {
+        if (this->gotFood){
+            if(seeAnthill()) seeAnthill();
+            else if (seePheromone()) seePheromone();
+            else if(seeFood()) seeFood();
+        }
+        else if (!this->gotFood){
+            seeFood();
+        }
+
        int id = (this->nbLine * (x()/50)) + 1 + (y()/50);
 //       std::cout<<"id : "<<id<<std::endl;
 //       std::cout<<"new id :"<<this->newCoord.id<<std::endl;

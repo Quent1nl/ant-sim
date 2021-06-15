@@ -6,7 +6,7 @@
 Food::Food() :
     centerElipse(new QGraphicsEllipseItem(50,50,40,40,this))
 {
-    //centerElipse->setPen(Qt::NoPen);
+    centerElipse->setPen(Qt::NoPen);
     setPixmap(QPixmap(":/assets/food.png"));
     this->setZValue(2);
     this->foodAnimation = new QPropertyAnimation(this, "lifeTime", this);

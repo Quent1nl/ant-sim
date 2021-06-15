@@ -18,8 +18,8 @@ anthillLifeBot(new QGraphicsRectItem(0,127,127,10,this)), newAnthillLifeBot(new 
 
 void AntHill::updateLife(float life)
 {
-    newAnthillLife->setRect(0,0,life*127,10);
 
+    newAnthillLife->setRect(0,0,life*127,10);
 }
 
 float AntHill::getLifeAnthill() const
@@ -32,5 +32,23 @@ void AntHill::setLifeAnthill(float newLifeAnthill)
     lifeAnthill += newLifeAnthill;
 }
 void AntHill::updateBotLife(){
+    collideAnt();
     newAnthillLifeBot->setRect(0,127,(getLifeAnthill()/this->lifeMax) *127,10);
+}
+
+bool AntHill::collideAnt()
+{
+    QList<QGraphicsItem*> collidingAnt = this->collidingItems();
+
+    foreach (QGraphicsItem * item, collidingAnt){
+        Warrior * antItem = dynamic_cast<Warrior*>(item);
+        if(antItem && antItem->getGotFood()) {
+            antItem->setGotFood(false);
+            std::cout<<"put food"<<antItem->getGotFood()<<std::endl;
+            this->lifeAnthill += 20;            
+            if (this->lifeAnthill > this->lifeMax) this->lifeAnthill = this->lifeMax;
+            return true;
+        }
+    }
+    return false;
 }

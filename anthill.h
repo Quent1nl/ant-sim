@@ -9,6 +9,7 @@
 #include <cellule.h>
 #include <coordinates.h>
 #include <queen.h>
+#include <warrior.h>
 
 class AntHill : public Cellule
 {
@@ -34,6 +35,8 @@ private :
 
     QGraphicsRectItem * anthillLifeBot;
     QGraphicsRectItem * newAnthillLifeBot;
+
+    bool collideAnt();
 
 };
 
