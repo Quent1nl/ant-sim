@@ -11,8 +11,9 @@
 #include <queen.h>
 #include <warrior.h>
 
-class AntHill : public Cellule
+class AntHill : public QObject, public Cellule
 {
+    Q_OBJECT
 public:
     AntHill() ;
     ~AntHill(){};
@@ -28,6 +29,11 @@ public:
     float getLifeAnthill() const;
     void updateBotLife();
 
+    qreal x() const;
+    void setx(qreal newX);
+
+    void updateFood();
+
 private :
     std::map<Coord, Cellule*> mapCellInAnthill; //map each cells to a coord
     QGraphicsRectItem * anthillLife;
@@ -37,6 +43,13 @@ private :
     QGraphicsRectItem * newAnthillLifeBot;
 
     bool collideAnt();
+
+    void animation();
+
+    qreal m_x;
+
+signals:
+
 
 };
 

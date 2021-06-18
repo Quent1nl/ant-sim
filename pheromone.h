@@ -15,7 +15,7 @@ class Pheromone : public QObject, public QGraphicsPixmapItem
     Q_OBJECT
     Q_PROPERTY(int lifeTime READ lifeTime WRITE setLifeTime)
 public:
-    explicit Pheromone();
+    explicit Pheromone(int evaporationRate);
 
     int lifeTime() const;
     void setLifeTime(int newLifeTime);

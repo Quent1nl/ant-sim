@@ -233,7 +233,7 @@
      <string>Y=50</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="inputFood_2">
+   <widget class="QComboBox" name="inputEvaporation">
     <property name="geometry">
      <rect>
       <x>240</x>

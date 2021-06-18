@@ -30,7 +30,7 @@ public:
     ~Map();
 
     std::map<Coord, Cellule*> generateCellDispo(int xStart, int yStart, int xEnd, int yEnd, int newCaseSize);
-    void generateObstacle();
+    void generateObstacle(int obstacleRate);
     void generateIntialFood(int foodRate);
     void generateFood();
     void generateFloor();

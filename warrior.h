@@ -13,7 +13,7 @@ class Warrior : public Ant
     Q_OBJECT
     Q_PROPERTY(int rip READ rip WRITE setRip)
 public:
-    explicit Warrior(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color);
+    explicit Warrior(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color, int evaporationRate);
     void setAnimationGroup() override;
 
     int getLife() const;
@@ -25,10 +25,15 @@ public:
     bool getGotFood() const;
     void setGotFood(bool state);
 
+
+
 private:
     int life = 10;
     int nbLine = 0;
+    int evaporationRate;
+
     bool collideWithFood();
+    bool collideWithAnthill();
     bool seeFood();
     bool seePheromone();
     bool seeAnthill();
@@ -39,12 +44,16 @@ private:
     int m_rip;
     bool gotFood = false;
 
+    int xAnthill = 0, yAnthill = -1;
+
     void insertPheromone();
     QPropertyAnimation * ripAnimation;
 
     QGraphicsEllipseItem * centerElipse;
+    QGraphicsEllipseItem * miniElipse;
 signals:
     void warriorDead();
+    void updateFood();
 };
 
 #endif // WARRIOR_H

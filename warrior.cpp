@@ -1,9 +1,11 @@
 #include "warrior.h"
 
-Warrior::Warrior(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color) : Ant(antPng, _mapCellDispo, _nbLigne, anthillPos, color),
-  nbLine(_nbLigne), centerElipse(new QGraphicsEllipseItem(-110,-110,350,350,this))
+Warrior::Warrior(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color, int evaporationRate) : Ant(antPng, _mapCellDispo, _nbLigne, anthillPos, color),
+  nbLine(_nbLigne), evaporationRate(evaporationRate), centerElipse(new QGraphicsEllipseItem(-110,-110, 350,350,this)), miniElipse(new QGraphicsEllipseItem(50,50,40,40,this))
 {
     //centerElipse->setPen(Qt::red);
+    this->xAnthill = anthillPos.x;
+    this->yAnthill = anthillPos.y;
 }
 
 void Warrior::setAnimationGroup()
@@ -38,7 +40,7 @@ void Warrior::setAnimationGroup()
         }else{
             //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
 
-            if (!this->gotFood) insertPheromone();
+
             moveAnt();
         }
 
@@ -59,16 +61,47 @@ void Warrior::setLife(int newLife)
 
 bool Warrior::collideWithFood()
 {
-    QList<QGraphicsItem*> collidingFood = this->collidingItems();
+    QList<QGraphicsItem*> collidingFood = miniElipse->collidingItems();
 
     foreach (QGraphicsItem * item, collidingFood){
         Food * foodItem = dynamic_cast<Food*>(item);
         if(foodItem) {
+            //std::cout<<"Collide with food"<<std::endl;
             this->gotFood = true;
             return true;
         }
     }
     return false;
+}
+
+bool Warrior::collideWithAnthill()
+{
+    if (this->pos().x() == this->xAnthill && this->pos().y() == this->yAnthill){
+        if (this->gotFood){
+
+            emit updateFood();
+            this->gotFood = false;
+            //std::cout<<"got foodzdzd ? "<<this->gotFood<<std::endl;
+        }
+        return true;
+    }
+    return false;
+//    QList<QGraphicsItem*> collidingAnthill = miniElipse->collidingItems();
+
+//    foreach (QGraphicsItem * item, collidingAnthill){
+//        AntHill * anthillItem = dynamic_cast<AntHill*>(item);
+//        if(anthillItem) {
+//            std::cout<<"collide with anthill"<<std::endl;
+//            if (this->gotFood){
+
+//                emit updateFood();
+//                this->gotFood = false;
+//            //std::cout<<"got foodzdzd ? "<<this->gotFood<<std::endl;
+//            }
+//            return true;
+//        }
+//    }
+//    return false;
 }
 
 bool Warrior::seeFood()
@@ -81,7 +114,7 @@ bool Warrior::seeFood()
         if(seeFoodItem){
             std::cout<<"see food"<<std::endl;
             //std::cout<<seeFoodItem->pos().x()<<" "<<seeFoodItem->pos().y()<<std::endl;
-            this->newCoord.x = seeFoodItem->pos().x();
+            this->newCoord.x = seeFoodItem->pos().  x();
             this->newCoord.y = seeFoodItem->pos().y();
             this->newCoord.id = (this->nbLine * (this->newCoord.x/50)) + 1 + (this->newCoord.y/50);
             return true;
@@ -97,11 +130,10 @@ bool Warrior::seePheromone()
     foreach (QGraphicsItem * item, seePheromone){
         Pheromone * seePheromoneItem = dynamic_cast<Pheromone*>(item);
 
-        if(seePheromoneItem && seePheromoneItem->pos().x()-22!= x() && seePheromoneItem->pos().y()-22!= y()  ){ //for current pheromones
-            std::cout<<"coord"<< seePheromoneItem->pos().x()-22<< " "<<x()<<" " <<seePheromoneItem->pos().y()-22<<" "<<y()<<std::endl;
+        if(seePheromoneItem && seePheromoneItem->pos().x()!= x() && seePheromoneItem->pos().y()!= y()){ //for current pheromones
             std::cout<<"see phero"<<std::endl;
-            this->newCoord.x = seePheromoneItem->pos().x()-22;
-            this->newCoord.y = seePheromoneItem->pos().y()-22;
+            this->newCoord.x = seePheromoneItem->pos().x();
+            this->newCoord.y = seePheromoneItem->pos().y();
             this->newCoord.id = (this->nbLine * (this->newCoord.x/50)) + 1 + (this->newCoord.y/50);
             return true;
         }
@@ -115,8 +147,8 @@ bool Warrior::seeAnthill()
 
     foreach (QGraphicsItem * item, seeAnthill){
         AntHill * seeAnthillItem = dynamic_cast<AntHill*>(item);
-
-        if(seeAnthillItem){
+        //std::cout<<"see anthill 0"<<std::endl;
+        if(seeAnthillItem /*&&*/ /*seeAnthillItem->pos().x()!= x() && seeAnthillItem->pos().y()!= y()*/){
             std::cout<<"see anthill"<<std::endl;
             this->newCoord.x = seeAnthillItem->pos().x();
             this->newCoord.y = seeAnthillItem->pos().y();
@@ -133,7 +165,7 @@ bool Warrior::seeAnthill()
 
 void Warrior::setx(qreal newX)
 {
-    if (collideWithFood()) setLife(20);
+
     moveBy(newX - this->m_x,0);
     this->m_x = newX;
     //std::cout<<"setter m_x : "<<this->m_x<<std::endl;
@@ -160,8 +192,8 @@ bool Warrior::getGotFood() const
 
 void Warrior::insertPheromone()
 {
-    Pheromone * pheromone = new Pheromone();
-    pheromone->setPos(this->x()+22, this->y()+22);
+    Pheromone * pheromone = new Pheromone(this->evaporationRate);
+    pheromone->setPos(this->x(), this->y());
     scene()->addItem(pheromone);
 }
 
@@ -176,15 +208,32 @@ void Warrior::setRip(int newRip)
 }
 
 void Warrior::moveAnt(){
-    if ((!this->gotFood && !seeFood()) || (this->gotFood && !seePheromone() && !seeAnthill() && !seeFood()) ) this->newCoord = getAdjacent();
+    std::cout<<"got food = "<<getGotFood()<<std::endl;
+    if (!this->gotFood) insertPheromone();
+    collideWithAnthill();
+    if ((!this->gotFood && !seeFood()) || (this->gotFood && !seePheromone() && !seeAnthill() && !seeFood()) ) {
+        std::cout<<"adjacent movement"<<std::endl;
+        this->newCoord = getAdjacent();
+    }
     else {
         if (this->gotFood){
-            if(seeAnthill()) seeAnthill();
-            else if (seePheromone()) seePheromone();
-            else if(seeFood()) seeFood();
+            if(seeAnthill()){
+                //std::cout<<"see anthill 0"<<std::endl;
+                std::cout<<"got food and see anthill "<<std::endl;
+                //seeAnthill();
+            }
+            else if (seePheromone()) {
+                //std::cout<<"see phero 1"<<std::endl;
+                //seePheromone();
+            }
+            else if(seeFood()) {
+                //std::cout<<"see food 2"<<std::endl;
+                //seeFood();
+            }
         }
         else if (!this->gotFood){
-            seeFood();
+            //std::cout<<"see food 4"<<std::endl;
+            //seeFood();
         }
 
        int id = (this->nbLine * (x()/50)) + 1 + (y()/50);
@@ -248,7 +297,7 @@ void Warrior::moveAnt(){
    this->xAnimation->setStartValue(x());
    this->xAnimation->setEndValue(this->newCoord.x);
    //this->xAnimation->setEasingCurve(QEasingCurve::InQuad);
-   this->xAnimation->setDuration(2000);
+   this->xAnimation->setDuration(3000);
    //this->xAnimation->start();D
 
 
@@ -256,7 +305,7 @@ void Warrior::moveAnt(){
    this->yAnimation->setStartValue(y());
    this->yAnimation->setEndValue(this->newCoord.y);
    //this->yAnimation->setEasingCurve(QEasingCurve::InQuad);
-   this->yAnimation->setDuration(2000);
+   this->yAnimation->setDuration(3000);
    //this->yAnimation->start();
 
    this->group = new QParallelAnimationGroup;
