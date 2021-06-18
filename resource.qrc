@@ -18,5 +18,6 @@
         <file>assets/tombstone.png</file>
         <file>assets/pheromone.png</file>
         <file>assets/dot.png</file>
+        <file>assets/phero.png</file>
     </qresource>
 </RCC>

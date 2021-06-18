@@ -1,7 +1,7 @@
 #include "anthill.h"
 
 AntHill::AntHill(): Cellule(QPixmap(":/assets/green.png")), anthillLife(new QGraphicsRectItem(0,0,127,10,this)), newAnthillLife(new QGraphicsRectItem(0,0,127,10,this)),
-anthillLifeBot(new QGraphicsRectItem(0,127,127,10,this)), newAnthillLifeBot(new QGraphicsRectItem(0,127,117,10,this))
+anthillLifeBot(new QGraphicsRectItem(0,117,127,10,this)), newAnthillLifeBot(new QGraphicsRectItem(0,117,127,10,this))
 {
     this->setScale(0.78);
     this->setZValue(2);  

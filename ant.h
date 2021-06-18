@@ -89,7 +89,7 @@ private:
     float scaleSize = 0.4;
 
 
-
+    int lastDirection =0;
     qreal m_rotation;
 
 signals:

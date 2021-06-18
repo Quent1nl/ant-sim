@@ -3,6 +3,8 @@
 Warrior::Warrior(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color, int evaporationRate) : Ant(antPng, _mapCellDispo, _nbLigne, anthillPos, color),
   nbLine(_nbLigne), evaporationRate(evaporationRate), centerElipse(new QGraphicsEllipseItem(-110,-110, 350,350,this)), miniElipse(new QGraphicsEllipseItem(50,50,40,40,this))
 {
+    centerElipse->setPen(Qt::NoPen);
+    miniElipse->setPen(Qt::NoPen);
     //centerElipse->setPen(Qt::red);
     this->xAnthill = anthillPos.x;
     this->yAnthill = anthillPos.y;
@@ -112,7 +114,7 @@ bool Warrior::seeFood()
         Food * seeFoodItem = dynamic_cast<Food*>(item);
 
         if(seeFoodItem){
-            std::cout<<"see food"<<std::endl;
+//            std::cout<<"see food"<<std::endl;
             //std::cout<<seeFoodItem->pos().x()<<" "<<seeFoodItem->pos().y()<<std::endl;
             this->newCoord.x = seeFoodItem->pos().  x();
             this->newCoord.y = seeFoodItem->pos().y();
@@ -130,11 +132,17 @@ bool Warrior::seePheromone()
     foreach (QGraphicsItem * item, seePheromone){
         Pheromone * seePheromoneItem = dynamic_cast<Pheromone*>(item);
 
-        if(seePheromoneItem && seePheromoneItem->pos().x()!= x() && seePheromoneItem->pos().y()!= y()){ //for current pheromones
-            std::cout<<"see phero"<<std::endl;
+        if(seePheromoneItem && (seePheromoneItem->pos().x()!= x()) && (seePheromoneItem->pos().y()!= y()) && (seePheromoneItem->pos().x()!=this->xPrevious) && (seePheromoneItem->pos().y() != this->yPrevious)){ //for current pheromones
+
+            //std::cout<<"see phero"<<std::endl;
+            //std::cout<<seePheromoneItem->pos().x()<<" "<<this->xPrevious<<" y : "<<seePheromoneItem->pos().y()<<" "<<this->yPrevious<<std::endl;
+           // seePheromoneItem->pos().x()!=this->xPrevious && seePheromoneItem->pos().y() != this->yPrevious
             this->newCoord.x = seePheromoneItem->pos().x();
             this->newCoord.y = seePheromoneItem->pos().y();
             this->newCoord.id = (this->nbLine * (this->newCoord.x/50)) + 1 + (this->newCoord.y/50);
+
+            this->xPrevious = seePheromoneItem->pos().x();
+            this->yPrevious = seePheromoneItem->pos().y();
             return true;
         }
     }
@@ -149,7 +157,7 @@ bool Warrior::seeAnthill()
         AntHill * seeAnthillItem = dynamic_cast<AntHill*>(item);
         //std::cout<<"see anthill 0"<<std::endl;
         if(seeAnthillItem /*&&*/ /*seeAnthillItem->pos().x()!= x() && seeAnthillItem->pos().y()!= y()*/){
-            std::cout<<"see anthill"<<std::endl;
+//            std::cout<<"see anthill"<<std::endl;
             this->newCoord.x = seeAnthillItem->pos().x();
             this->newCoord.y = seeAnthillItem->pos().y();
             this->newCoord.id = (this->nbLine * (this->newCoord.x/50)) + 1 + (this->newCoord.y/50);
@@ -165,7 +173,7 @@ bool Warrior::seeAnthill()
 
 void Warrior::setx(qreal newX)
 {
-
+    //seePheromone();
     moveBy(newX - this->m_x,0);
     this->m_x = newX;
     //std::cout<<"setter m_x : "<<this->m_x<<std::endl;
@@ -208,18 +216,18 @@ void Warrior::setRip(int newRip)
 }
 
 void Warrior::moveAnt(){
-    std::cout<<"got food = "<<getGotFood()<<std::endl;
+//    std::cout<<"got food = "<<getGotFood()<<std::endl;
     if (!this->gotFood) insertPheromone();
     collideWithAnthill();
     if ((!this->gotFood && !seeFood()) || (this->gotFood && !seePheromone() && !seeAnthill() && !seeFood()) ) {
-        std::cout<<"adjacent movement"<<std::endl;
+//        std::cout<<"adjacent movement"<<std::endl;
         this->newCoord = getAdjacent();
     }
     else {
         if (this->gotFood){
             if(seeAnthill()){
                 //std::cout<<"see anthill 0"<<std::endl;
-                std::cout<<"got food and see anthill "<<std::endl;
+//                std::cout<<"got food and see anthill "<<std::endl;
                 //seeAnthill();
             }
             else if (seePheromone()) {

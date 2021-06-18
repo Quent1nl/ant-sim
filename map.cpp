@@ -187,7 +187,22 @@ void Map::generateAntHill()
                 larva->setZValue(2);
                 this->scene->addItem(larva);
                 connect(larva, &Larva::generateAnt, [=](){
+                    Warrior * warrior = new Warrior(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red), pheromoneRate);
+                    warrior->setZValue(3);
+                    //change color of the ant
+                    this->scene->addItem(warrior);
+                    warrior->moveAnt();
 
+                    //map each warrior to its anthill
+                    this->mapAnt.insert(std::make_pair(warrior,antHill));
+                    connect(warrior, &Warrior::warriorDead, [=](){
+                        auto it = this->mapAnt.find(warrior);
+                        //map each warrior to its anthill
+                        this->mapAnt.erase(it);
+                    });
+                    connect(warrior, &Warrior::updateFood, [=](){
+                        antHill->updateFood();
+                    });
 
                 });
 
@@ -196,22 +211,7 @@ void Map::generateAntHill()
         }
     });
 
-    Warrior * warrior = new Warrior(":/assets/ant.png", this->mapMove, this->coord.y,antHillCoord, QColor(Qt::red), pheromoneRate);
-    warrior->setZValue(3);
-    //change color of the ant
-    this->scene->addItem(warrior);
-    warrior->moveAnt();
 
-    //map each warrior to its anthill
-    this->mapAnt.insert(std::make_pair(warrior,antHill));
-    connect(warrior, &Warrior::warriorDead, [=](){
-        auto it = this->mapAnt.find(warrior);
-        //map each warrior to its anthill
-        this->mapAnt.erase(it);
-    });
-    connect(warrior, &Warrior::updateFood, [=](){
-        antHill->updateFood();
-    });
 
     QTimer * antTimer = new QTimer(this);
     connect(antTimer, &QTimer::timeout,[=](){

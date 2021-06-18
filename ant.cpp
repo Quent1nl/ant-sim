@@ -64,6 +64,7 @@ Coord Ant::getAdjacent() {
     //std::cout<< "Coord de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
     Coord co;
     bool foundKey = false;
+    bool removePreviousMove = true;
     // load them in to a list.
     std::list<int> l = {1,2,3,4};
     qreal angle = 200;
@@ -74,6 +75,14 @@ Coord Ant::getAdjacent() {
         l.remove(1);
     }
     do {
+        if (removePreviousMove){
+            l.remove(this->lastDirection);
+            removePreviousMove=false;
+        }
+        else if(l.size() == 0){
+            l.push_back(this->lastDirection);
+        }
+
         auto it = l.begin();
         auto newIt = std::next(it, (std::rand() % l.size()) );//select a random cell available
         //std::cout<<"random "<< *newIt<<std::endl;
@@ -84,7 +93,7 @@ Coord Ant::getAdjacent() {
             if (this->mapCellDispo.find(co) != this->mapCellDispo.end()){
                 this->cellIt = this->mapCellDispo.find(co);
                 foundKey = true;
-
+                this->lastDirection = 2;
                 angle = 0;
                 //std::cout<< "case en haut de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
@@ -97,8 +106,8 @@ Coord Ant::getAdjacent() {
             if (this->mapCellDispo.find(co) != this->mapCellDispo.end()){
                 this->cellIt = this->mapCellDispo.find(co);
                 foundKey = true;
-
-                 angle = 180;
+                this->lastDirection = 1;
+                angle = 180;
                 //std::cout<< "case en bas de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
             break;
@@ -109,6 +118,7 @@ Coord Ant::getAdjacent() {
             if (this->mapCellDispo.find(co) != this->mapCellDispo.end()){
                 this->cellIt = this->mapCellDispo.find(co);
                 foundKey = true;
+                this->lastDirection = 4;
                 angle = -90;
                 //std::cout<< "case a gauche de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }
@@ -120,6 +130,7 @@ Coord Ant::getAdjacent() {
             if (this->mapCellDispo.find(co) != this->mapCellDispo.end()){
                 this->cellIt = this->mapCellDispo.find(co);
                 foundKey = true;
+                this->lastDirection = 3;
                 angle = 90;
                 //std::cout<< "case a droite de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
             }

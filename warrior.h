@@ -32,6 +32,9 @@ private:
     int nbLine = 0;
     int evaporationRate;
 
+    int xPrevious=-10;
+    int yPrevious=-10;
+
     bool collideWithFood();
     bool collideWithAnthill();
     bool seeFood();
