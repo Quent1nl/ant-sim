@@ -35,7 +35,7 @@ void AntHill::setLifeAnthill(float newLifeAnthill)
 }
 void AntHill::updateBotLife(){
     float life = (getLifeAnthill()/this->lifeMax) *127;
-    newAnthillLifeBot->setRect(0,127,life,10);
+    newAnthillLifeBot->setRect(0,117,life,10);
 
 }
 
