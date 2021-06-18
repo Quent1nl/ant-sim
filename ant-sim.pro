@@ -18,8 +18,10 @@ SOURCES += \
     main.cpp \
     map.cpp \
     obstacle.cpp \
+    pheromone.cpp \
     queen.cpp \
-    scene.cpp
+    scene.cpp \
+    warrior.cpp
 
 HEADERS += \
     ant.h \
@@ -31,8 +33,10 @@ HEADERS += \
     larva.h \
     map.h \
     obstacle.h \
+    pheromone.h \
     queen.h \
-    scene.h
+    scene.h \
+    warrior.h
 
 FORMS += \
     map.ui

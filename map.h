@@ -15,6 +15,7 @@
 #include <coordinates.h>
 #include <egg.h>
 #include <larva.h>
+#include <warrior.h>
 
 namespace Ui {
 class Map;
@@ -29,14 +30,15 @@ public:
     ~Map();
 
     std::map<Coord, Cellule*> generateCellDispo(int xStart, int yStart, int xEnd, int yEnd, int newCaseSize);
-    void generateObstacle();
-    void generateIntialFood();
+    void generateObstacle(int obstacleRate);
+    void generateIntialFood(int foodRate);
     void generateFood();
     void generateFloor();
     void generateAntHill();
 
 private slots:
     void on_playButton_clicked();
+
 
 private:
     Ui::Map *ui;
@@ -45,6 +47,9 @@ private:
     const int caseSize =  50;
     const int obstacleSize = 100;
     const float imgSize = 0.4f;//scale png
+
+    int queenSpawnRate = 0;
+
     Coord coord;
     Coord antHillCoord;
     Coord eggCoord;
@@ -62,7 +67,7 @@ private:
     std::map<Coord, AntHill*>::iterator antHillIt; //map each AntHill to a coord
     std::map<Coord, Cellule*> mapCellInAnthill; //map each cells to a coord
 
-    std::map<Ant*, AntHill*> mapAnt; //map each ant to a anthill
+    std::map<Warrior*, AntHill*> mapAnt; //map each warrior to a anthill
 };
 
 #endif // MAP_H

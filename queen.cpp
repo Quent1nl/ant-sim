@@ -1,9 +1,8 @@
 #include "queen.h"
 
-Queen::Queen(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, bool isAnthill, QColor color) : Ant(antPng, _mapCellDispo, _nbLigne, anthillPos, isAnthill, color)
-{
+Queen::Queen(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, bool isAnthill, QColor color) : Ant(antPng, _mapCellDispo, _nbLigne, anthillPos, isAnthill, color){}
 
-}
+Queen::Queen(QString antPng, std::map<Coord, Cellule *> &_mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color) : Ant(antPng, _mapCellDispo, _nbLigne, anthillPos, color){}
 
 void Queen::setAnimationGroup()
 {
@@ -16,12 +15,19 @@ void Queen::setAnimationGroup()
 
     //std::cout<<"bx : "<<x()<<" y : "<<y()<<std::endl;
     connect(seqGroupe,&QPropertyAnimation::finished,[=](){
+        //std::cout<<"egg: "<<this->newEgg<<std::endl;
         if (this->newEgg++ == 5){
+
             this->newEgg = 0;
             emit generateEgg();
+            moveAnt();
+
         }
-        //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
         moveAnt();
+
+
+        //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
+
 
     });
 }
