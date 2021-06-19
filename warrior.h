@@ -14,17 +14,8 @@ class Warrior : public Ant
     Q_PROPERTY(int rip READ rip WRITE setRip)
 public:
     explicit Warrior(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, QColor color, int evaporationRate);
-    void setAnimationGroup() override;
-
     int getLife() const;
-    void setLife(int newLife);
-
-    int rip() const;
-    void setRip(int newRip);
     void moveAnt() override;
-    bool getGotFood() const;
-    void setGotFood(bool state);
-
 
 
 private:
@@ -32,8 +23,18 @@ private:
     int nbLine = 0;
     int evaporationRate;
 
+    int m_rip;
+    bool gotFood = false;
+
     int xPrevious=-10;
     int yPrevious=-10;
+
+    int xAnthill = 0, yAnthill = -1;
+
+    QPropertyAnimation * ripAnimation;
+
+    QGraphicsEllipseItem * centerElipse;
+    QGraphicsEllipseItem * miniElipse;
 
     bool collideWithFood();
     bool collideWithAnthill();
@@ -44,16 +45,17 @@ private:
     void setx(qreal newX) override;
     void setY(qreal newY) override;
 
-    int m_rip;
-    bool gotFood = false;
-
-    int xAnthill = 0, yAnthill = -1;
-
     void insertPheromone();
-    QPropertyAnimation * ripAnimation;
+    void setAnimationGroup() override;
 
-    QGraphicsEllipseItem * centerElipse;
-    QGraphicsEllipseItem * miniElipse;
+    void setLife(int newLife);
+
+    int rip() const;
+    void setRip(int newRip);
+
+    bool getGotFood() const;
+    void setGotFood(bool state);
+
 signals:
     void warriorDead();
     void updateFood();

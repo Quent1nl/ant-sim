@@ -1,7 +1,6 @@
 #ifndef QUEEN_H
 #define QUEEN_H
 
-
 #include <ant.h>
 #include <QGraphicsScene>
 

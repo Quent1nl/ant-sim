@@ -27,14 +27,7 @@ class Map : public QWidget
 
 public:
     explicit Map(QWidget *parent = nullptr);
-    ~Map();
-
-    std::map<Coord, Cellule*> generateCellDispo(int xStart, int yStart, int xEnd, int yEnd, int newCaseSize);
-    void generateObstacle(int obstacleRate);
-    void generateIntialFood(int foodRate);
-    void generateFood();
-    void generateFloor();
-    void generateAntHill();
+    ~Map();    
 
 private slots:
     void on_playButton_clicked();
@@ -68,6 +61,14 @@ private:
     std::map<Coord, Cellule*> mapCellInAnthill; //map each cells to a coord
 
     std::map<Warrior*, AntHill*> mapAnt; //map each warrior to a anthill
+
+    std::map<Coord, Cellule*> generateCellDispo(int xStart, int yStart, int xEnd, int yEnd, int newCaseSize);
+
+    void generateObstacle(int obstacleRate);
+    void generateIntialFood(int foodRate);
+    void generateFood();
+    void generateFloor();
+    void generateAntHill();
 };
 
 #endif // MAP_H

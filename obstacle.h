@@ -8,8 +8,7 @@ class Obstacle : public Cellule
     public:
 
     Obstacle(QPixmap pixmap) : Cellule(pixmap){}
-
-    ~Obstacle(){}
+    ~Obstacle(){ delete this;}
 };
 
 #endif // OBSTACLE_H
