@@ -16,37 +16,36 @@ class AntHill : public QObject, public Cellule
     Q_OBJECT
 public:
     AntHill() ;
-    ~AntHill(){};
+    ~AntHill(){delete this;};
 
     void updateLife(float life);
-
-    int lifeMax = 300;
-    int nbAntMax = 20;
-    int lifeAnthill = 300;
-
     void setLifeAnthill(float newLifeAnthill);
-
     float getLifeAnthill() const;
+
+    //update le stock de nourriture
     void updateBotLife();
-
-    qreal x() const;
-    void setx(qreal newX);
-
+    //update la vie des guerrières
     void updateFood();
 
 private :
     std::map<Coord, Cellule*> mapCellInAnthill; //map each cells to a coord
+
     QGraphicsRectItem * anthillLife;
     QGraphicsRectItem * newAnthillLife;
 
     QGraphicsRectItem * anthillLifeBot;
     QGraphicsRectItem * newAnthillLifeBot;
 
-    bool collideAnt();
+    int lifeMax = 300;
+    int nbAntMax = 20;
+    int lifeAnthill = 300;
 
+    bool collideAnt();
     void animation();
 
     qreal m_x;
+    qreal x() const;
+    void setx(qreal newX);
 
 signals:
 

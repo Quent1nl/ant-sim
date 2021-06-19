@@ -11,7 +11,6 @@ Pheromone::Pheromone(int evaporationRate)
     //this->xAnimation->setEasingCurve(QEasingCurve::InQuad);
     this->pheromoneAnimation->setDuration(30000 * (evaporationRate+2));
 
-
     connect(this->pheromoneAnimation,&QPropertyAnimation::finished,[=](){
         //std::cout<<"food expired"<<std::endl;
         scene()->removeItem(this);
@@ -35,16 +34,10 @@ bool Pheromone::collidePheromone()
 
 int Pheromone::lifeTime() const
 {
-
     return m_lifeTime;
 }
 
 void Pheromone::setLifeTime(int newLifeTime)
 {
-//    if (collidePheromone()){
-//        scene()->removeItem(this);
-//        delete this;
-//    }
-
     m_lifeTime = newLifeTime;
 }

@@ -34,62 +34,60 @@ public:
     //Ant(const Ant &ant);
     ~Ant(){};
 
-
     virtual void moveAnt();
-    virtual void setAnimationGroup();
 
-    std::map<Coord, Cellule*>::iterator cellIt;
-
+    //position x y de la fourmie
     qreal x() const;
     qreal y() const;
 
-    qreal m_x;
-    qreal m_y;
+    //get the new coord position
+    const Coord &getNewCoord() const;
 
+protected:
+    //movement
+    Coord getAdjacent();
+    Coord newCoord;
+    std::map<Coord, Cellule*>::iterator cellIt;//iterateur
 
-
-
+    //rotate
     const qreal &rotation() const;
     void setRotation(const qreal &newRotation);
     void rotate(const qreal &end, int duration);
 
-    QParallelAnimationGroup * group;
-    QPropertyAnimation * xAnimation;
-    QPropertyAnimation * yAnimation;
-    QPropertyAnimation * rotationAnimation;
+    //animation
+    qreal m_x;
+    qreal m_y;
+    QParallelAnimationGroup * group;//animation de groupe
+    QPropertyAnimation * xAnimation;//animation pour le déplacement x
+    QPropertyAnimation * yAnimation;//animation pour le déplacement y
+    QPropertyAnimation * rotationAnimation;//animation de rotation
 
+    virtual void setAnimationGroup();
 
-
-    const Coord &getNewCoord() const;
-    Coord getAdjacent();
-    Coord newCoord;
-
+    //set pixmaps
     void setAntP(const QPixmap &newAntP, QColor color);
-
     void setAntP2(const QPixmap &newAntP2, QColor color);
 
 private:
-    std::map<Coord, Cellule*> mapCellDispo;//map each cells to a coord    
-
-
-    int idAnthill = 0;
-    bool isAnthill = false;
+    std::map<Coord, Cellule*> mapCellDispo;//map each cells to a coord
 
     QString antPng;
     QString antPng2;
     QPixmap antP;
     QPixmap antP2;
 
-    int nbLigne;
-    int caseSize= 50 ;
-
     int legPosition;
     void updatePixmap();
 
+    int nbLigne;
+    int caseSize= 50 ;
+
+    int idAnthill = 0;
+    bool isAnthill = false;
+
     float scaleSize = 0.4;
 
-
-    int lastDirection =0;
+    int lastDirection = 0;
     qreal m_rotation;
 
 signals:
@@ -97,8 +95,6 @@ signals:
 public slots :
     virtual void setx(qreal newX);
     virtual void setY(qreal newY);
-
-
 };
 
 #endif // ANT_H

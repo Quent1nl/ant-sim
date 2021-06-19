@@ -13,15 +13,15 @@ class Egg : public Ant
 public:
     explicit Egg(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _nbLigne, Coord &anthillPos, bool isAnthill, QColor color);
 
-    int lifeTime() const;
-    void setLifeTime(int newLifeTime);
-
 signals:
     void generateLarva() ;
 
 private:
     int m_lifeTime;
     QPropertyAnimation * eggAnimation;
+
+    int lifeTime() const;
+    void setLifeTime(int newLifeTime);
 };
 
 #endif // EGG_H

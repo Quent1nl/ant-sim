@@ -10,6 +10,7 @@ Warrior::Warrior(QString antPng, std::map<Coord, Cellule*>& _mapCellDispo, int _
     this->yAnthill = anthillPos.y;
 }
 
+//override animation to add tombstone when warrior dies
 void Warrior::setAnimationGroup()
 {
     QSequentialAnimationGroup *seqGroupe= new QSequentialAnimationGroup;
@@ -39,14 +40,9 @@ void Warrior::setAnimationGroup()
                 delete this;
             });
 
-        }else{
-            //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
-
-
+        }else{          
             moveAnt();
         }
-
-
     });
 }
 
@@ -80,7 +76,6 @@ bool Warrior::collideWithAnthill()
 {
     if (this->pos().x() == this->xAnthill && this->pos().y() == this->yAnthill){
         if (this->gotFood){
-
             emit updateFood();
             this->gotFood = false;
             //std::cout<<"got foodzdzd ? "<<this->gotFood<<std::endl;
@@ -134,7 +129,7 @@ bool Warrior::seePheromone()
 
         if(seePheromoneItem && (seePheromoneItem->pos().x()!= x()) && (seePheromoneItem->pos().y()!= y()) && (seePheromoneItem->pos().x()!=this->xPrevious) && (seePheromoneItem->pos().y() != this->yPrevious)){ //for current pheromones
 
-            //std::cout<<"see phero"<<std::endl;
+            std::cout<<"see phero"<<std::endl;
             //std::cout<<seePheromoneItem->pos().x()<<" "<<this->xPrevious<<" y : "<<seePheromoneItem->pos().y()<<" "<<this->yPrevious<<std::endl;
            // seePheromoneItem->pos().x()!=this->xPrevious && seePheromoneItem->pos().y() != this->yPrevious
             this->newCoord.x = seePheromoneItem->pos().x();
@@ -167,10 +162,6 @@ bool Warrior::seeAnthill()
     return false;
 }
 
-
-
-
-
 void Warrior::setx(qreal newX)
 {
     //seePheromone();
@@ -178,7 +169,6 @@ void Warrior::setx(qreal newX)
     this->m_x = newX;
     //std::cout<<"setter m_x : "<<this->m_x<<std::endl;
 }
-
 
 void Warrior::setY(qreal newY)
 {
@@ -216,13 +206,16 @@ void Warrior::setRip(int newRip)
 }
 
 void Warrior::moveAnt(){
-//    std::cout<<"got food = "<<getGotFood()<<std::endl;
+    //insert pheromone if no food
     if (!this->gotFood) insertPheromone();
-    collideWithAnthill();
+    collideWithAnthill();//if collideWithAnhill and got food => add food to the anthill
+
+    //adjacent movment
     if ((!this->gotFood && !seeFood()) || (this->gotFood && !seePheromone() && !seeAnthill() && !seeFood()) ) {
 //        std::cout<<"adjacent movement"<<std::endl;
         this->newCoord = getAdjacent();
     }
+    //mouvement ciblée si anthill pheromone food à proximité
     else {
         if (this->gotFood){
             if(seeAnthill()){
@@ -289,16 +282,10 @@ void Warrior::moveAnt(){
 
       if (angle == rotation()){
            rotate(angle , 10);
-       }/*else if(abs(angle) == 90 || angle == 180 || angle ==0){
-           rotate(angle , 800);
-       }*/
-       else{
+       }else{
            rotate(angle , 800);
        }
-
    }
-
-
    //std::cout<<"nouvelle coord x:"<<this->newCoord.x<<" coord y : "<<this->newCoord.y<<std::endl;
 
    this->xAnimation = new QPropertyAnimation(this, "x", this);
@@ -322,6 +309,4 @@ void Warrior::moveAnt(){
    //group->start();
 
    setAnimationGroup();
-
-
 }

@@ -16,18 +16,12 @@ void Queen::setAnimationGroup()
     //std::cout<<"bx : "<<x()<<" y : "<<y()<<std::endl;
     connect(seqGroupe,&QPropertyAnimation::finished,[=](){
         //std::cout<<"egg: "<<this->newEgg<<std::endl;
+        //pond un oeuf tous les cinq déplacements
         if (this->newEgg++ == 5){
-
             this->newEgg = 0;
             emit generateEgg();
             moveAnt();
-
         }
         moveAnt();
-
-
-        //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
-
-
     });
 }

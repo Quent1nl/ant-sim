@@ -5,6 +5,7 @@ anthillLifeBot(new QGraphicsRectItem(0,117,127,10,this)), newAnthillLifeBot(new 
 {
     this->setScale(0.78);
     this->setZValue(2);  
+
     anthillLife->setPen(Qt::NoPen);
     anthillLife->setBrush(Qt::red);
     newAnthillLife->setPen(Qt::NoPen);
@@ -17,10 +18,16 @@ anthillLifeBot(new QGraphicsRectItem(0,117,127,10,this)), newAnthillLifeBot(new 
 
 }
 
+//update the top bar
 void AntHill::updateLife(float life)//life of warriors
 {
-
     newAnthillLife->setRect(0,0,life*127,10);
+}
+
+//update the bottom bar
+void AntHill::updateBotLife(){
+    float life = (getLifeAnthill()/this->lifeMax) *127;
+    newAnthillLifeBot->setRect(0,117,life,10);
 }
 
 float AntHill::getLifeAnthill() const
@@ -33,12 +40,8 @@ void AntHill::setLifeAnthill(float newLifeAnthill)
     lifeAnthill += newLifeAnthill;
     if (lifeAnthill<0) lifeAnthill = 0;
 }
-void AntHill::updateBotLife(){
-    float life = (getLifeAnthill()/this->lifeMax) *127;
-    newAnthillLifeBot->setRect(0,117,life,10);
 
-}
-
+//collision with warrior
 bool AntHill::collideAnt()
 {
     QList<QGraphicsItem*> collidingAnt = this->collidingItems();
@@ -52,8 +55,6 @@ bool AntHill::collideAnt()
     return false;
 }
 
-
-
 qreal AntHill::x() const
 {
     return m_x;
@@ -64,10 +65,13 @@ void AntHill::setx(qreal newX)
     m_x = newX;
 }
 
+//update the food quantity
 void AntHill::updateFood()
 {
+    //if collide with warrior add food and update
     if (collideAnt()){
-        this->lifeAnthill += 20;        
+        this->lifeAnthill += 40;
+        updateBotLife();
         std::cout<<"food in anthill"<<std::endl;
         if (this->lifeAnthill > this->lifeMax) this->lifeAnthill = this->lifeMax;        
     }

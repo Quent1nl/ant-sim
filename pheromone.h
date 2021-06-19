@@ -17,15 +17,18 @@ class Pheromone : public QObject, public QGraphicsPixmapItem
 public:
     explicit Pheromone(int evaporationRate);
 
-    int lifeTime() const;
-    void setLifeTime(int newLifeTime);
+
 
 private:
     QGraphicsEllipseItem * centerElipse;
-    bool collidePheromone();
+    QPropertyAnimation * pheromoneAnimation;
     int m_lifeTime;
 
-    QPropertyAnimation * pheromoneAnimation;
+    bool collidePheromone();    
+    int lifeTime() const;
+    void setLifeTime(int newLifeTime);
+
+
 
 signals:
 

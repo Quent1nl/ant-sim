@@ -11,8 +11,6 @@ class Cellule : public QGraphicsPixmapItem
 public:
     Cellule(QPixmap pixmap): QGraphicsPixmapItem(pixmap){};
     virtual ~Cellule(){};
-
-
 };
 
 #endif // CELLULE_H

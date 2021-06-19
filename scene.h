@@ -10,8 +10,6 @@ class Scene : public QGraphicsScene
 public:
     explicit Scene(QObject *parent = nullptr);
 
-    void startGame();
-
 signals:
 
 };
