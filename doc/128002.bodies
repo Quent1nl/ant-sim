@@ -1,0 +1,227 @@
+class Ant
+!!!128514.cpp!!!	moveAnt() : void
+
+
+    this->newCoord = getAdjacent();
+
+    //std::cout<<"nouvelle coord x:"<<this->newCoord.x<<" coord y : "<<this->newCoord.y<<std::endl;
+
+    //Déplacement x
+    this->xAnimation = new QPropertyAnimation(this, "x", this);
+    this->xAnimation->setStartValue(x());
+    this->xAnimation->setEndValue(this->newCoord.x);
+    //this->xAnimation->setEasingCurve(QEasingCurve::InQuad);
+    this->xAnimation->setDuration(2000);
+    //this->xAnimation->start();D
+
+    //Déplacement y
+    this->yAnimation = new QPropertyAnimation(this, "y", this);
+    this->yAnimation->setStartValue(y());
+    this->yAnimation->setEndValue(this->newCoord.y);
+    //this->yAnimation->setEasingCurve(QEasingCurve::InQuad);
+    this->yAnimation->setDuration(2000);
+    //this->yAnimation->start();
+
+    //animation parallèle
+    this->group = new QParallelAnimationGroup;
+    group->addAnimation(this->xAnimation);
+    group->addAnimation(this->yAnimation);
+    //group->start();
+
+    setAnimationGroup();
+!!!128642.cpp!!!	x() : qreal
+
+    //std::cout<<"m_x : "<<this->m_x<<std::endl;
+    return this->m_x;
+!!!128770.cpp!!!	y() : qreal
+
+    //std::cout<<"m_y : "<<this->m_y<<std::endl;
+    return this->m_y;
+!!!128898.cpp!!!	getNewCoord() : Coord
+
+    return newCoord;
+!!!129026.cpp!!!	getAdjacent() : Coord
+
+    //récupère les coordonnées de la fourmie
+    Coord * coord = new Coord(x(),y(),(this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize) - this->idAnthill);
+    //std::cout<<"current coord x:"<<coord->x<<" coord y:"<<coord->y<<" id: "<<coord->id<<std::endl;
+    //this->cellIt = this->mapCellDispo.find(*coord);
+    //std::cout<< "Coord de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+    Coord co;
+    bool foundKey = false;
+    bool removePreviousMove = true;
+
+    // list pour le déplacement aléatoire
+    std::list<int> l = {1,2,3,4};
+    qreal angle = 200;
+
+    //Pour éviter que les fourmis se téléportent d'un bord à l'autre
+    if (coord->id % this->nbLigne == 0 /*&& (this->nbLigne * (x()/caseSize)) + 1 + (y()/caseSize) != this->idAnthill*/){
+        l.remove(2);
+    } else if (coord->id % this->nbLigne == 1){
+        l.remove(1);
+    }
+
+    //Coordonnée adjacente aléatoire
+    do {
+        //remove the previous direction, permet d'éviter que la fourmis tourne en rond
+        if (removePreviousMove){
+            l.remove(this->lastDirection);
+            removePreviousMove=false;
+        }
+        //dans le cas où la fourmie est dans un cul de sac
+        else if(l.size() == 0){
+            l.push_back(this->lastDirection);
+        }
+
+        //select a random cell available
+        auto it = l.begin();
+        auto newIt = std::next(it, (std::rand() % l.size()) );
+        //std::cout<<"random "<< *newIt<<std::endl;
+        switch(*newIt){
+        //case 1, direction => en haut avec un angle à 0
+        case 1:
+            l.remove(*newIt);
+            co.id = coord->id - 1;
+            if (this->mapCellDispo.find(co) != this->mapCellDispo.end()){
+                this->cellIt = this->mapCellDispo.find(co);
+                foundKey = true;
+                this->lastDirection = 2;
+                angle = 0;
+                //std::cout<< "case en haut de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+            }
+
+            break;
+
+        case 2:
+            //case 2, direction => en haut avec un angle à 180
+            l.remove(*newIt);
+            co.id = coord->id + 1;
+            if (this->mapCellDispo.find(co) != this->mapCellDispo.end()){
+                this->cellIt = this->mapCellDispo.find(co);
+                foundKey = true;
+                this->lastDirection = 1;
+                angle = 180;
+                //std::cout<< "case en bas de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+            }
+            break;
+
+        case 3:
+            //case 3, direction => en haut avec un angle à -90
+            l.remove(*newIt);
+            co.id = coord->id - nbLigne;
+            if (this->mapCellDispo.find(co) != this->mapCellDispo.end()){
+                this->cellIt = this->mapCellDispo.find(co);
+                foundKey = true;
+                this->lastDirection = 4;
+                angle = -90;
+                //std::cout<< "case a gauche de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+            }
+            break;
+
+        case 4:
+            //case 4, direction => en haut avec un angle à 90
+            l.remove(*newIt);
+            co.id = coord->id + nbLigne;
+            if (this->mapCellDispo.find(co) != this->mapCellDispo.end()){
+                this->cellIt = this->mapCellDispo.find(co);
+                foundKey = true;
+                this->lastDirection = 3;
+                angle = 90;
+                //std::cout<< "case a droite de la fourmi x: "<<this->cellIt->first.x<< " y: "<< this->cellIt->first.y <<" id: " << this->cellIt->first.id <<std::endl;
+            }
+            break;
+        }
+    } while(!foundKey);
+    //std::cout<<"angle :"<<angle;
+    //s'il la fourmie continue dans la même direction on réduit le temps de rotation à 10ms
+    if (angle == rotation()){
+        rotate(angle , 10);
+    }else{
+        rotate(angle , 800);
+    }
+
+    //return les coordonnées
+    //std::cout<<"id:"<<this->cellIt->first.id<<std::endl;
+    this->newCoord.id = this->cellIt->first.id;
+    this->newCoord.x = this->cellIt->first.x;
+    this->newCoord.y = this->cellIt->first.y;
+    return this->newCoord;
+!!!129154.cpp!!!	rotation() : qreal
+
+    return m_rotation;
+!!!129282.cpp!!!	setRotation(in newRotation : qreal) : void
+
+     m_rotation = newRotation;
+    //rotation from the center of the ant
+     QPointF c = boundingRect().center();//get center of ant
+     QTransform t ;
+     //std::cout<<"c.x : "<<c.x()<<" c.y : "<<c.y()<<std::endl;
+     //std::cout<<"zx : "<<x()<<" y : "<<y()<<std::endl;
+     t.translate(c.x()*scaleSize,c.y()*scaleSize);//go to center of ant
+     t.rotate(newRotation);
+     t.translate(-c.x()*scaleSize,-c.y()*scaleSize);//go to center of ant
+     setTransform(t);
+!!!129410.cpp!!!	rotate(in end : qreal, in duration : int) : void
+
+     this->rotationAnimation = new QPropertyAnimation(this, "rotation",this);
+     //std::cout<<" rotation :"<<rotation()<<std::endl;
+     this->rotationAnimation->setStartValue(rotation());
+     this->rotationAnimation->setEndValue(end);
+     //this->rotationAnimation->setEasingCurve(QEasingCurve::Linear);
+     this->rotationAnimation->setDuration(duration);
+     //std::cout<<"cx : "<<x()<<" y : "<<y()<<std::endl;
+     //this->rotationAnimation->start();
+!!!129538.cpp!!!	setAnimationGroup() : void
+
+     //animation séquentiel
+     QSequentialAnimationGroup *seqGroupe= new QSequentialAnimationGroup;
+
+     seqGroupe->addAnimation(this->rotationAnimation);
+     seqGroupe->addAnimation(this->group);
+
+     seqGroupe->start();
+
+     //Enchaine les déplacements
+     connect(seqGroupe,&QPropertyAnimation::finished,[=](){
+         //std::cout<<"ax : "<<x()<<" y : "<<y()<<std::endl;
+         moveAnt();
+     });
+!!!129666.cpp!!!	setAntP(in newAntP : QPixmap, in color : QColor) : void
+
+    this->antP = newAntP;
+    auto mask = this->antP.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
+    QPainter p (&this->antP);
+    p.setPen(color);
+    p.drawPixmap(this->antP.rect(), mask, mask.rect());
+    p.end();
+!!!129794.cpp!!!	setAntP2(in newAntP2 : QPixmap, in color : QColor) : void
+
+    this->antP2 = newAntP2;
+    auto mask2 = this->antP2.createMaskFromColor(QColor(68,114,196), Qt::MaskOutColor)  ;
+    QPainter p2 (&this->antP2);
+    p2.setPen(color);
+    p2.drawPixmap(this->antP2.rect(), mask2, mask2.rect());
+    p2.end();
+!!!129922.cpp!!!	updatePixmap() : void
+
+    if (this->legPosition){
+        setPixmap(this->antP);
+        this->setScale(scaleSize);
+        this->legPosition = 0;
+    }else{
+
+        setPixmap(this->antP2);
+        this->setScale(scaleSize);
+        this->legPosition = 1;
+    }
+!!!130050.cpp!!!	setx(in newX : qreal) : void
+
+    moveBy(newX - this->m_x,0);
+    this->m_x = newX;
+    //std::cout<<"setter m_x : "<<this->m_x<<std::endl;
+!!!130178.cpp!!!	setY(in newY : qreal) : void
+
+    moveBy(0, newY - this->m_y);
+    this->m_y = newY;
+    //std::cout<<"setter m_y : "<<this->m_y<<std::endl;

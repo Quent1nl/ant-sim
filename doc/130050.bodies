@@ -1,0 +1,35 @@
+class Pheromone
+!!!136066.cpp!!!	Pheromone(in evaporationRate : int)
+
+    setPixmap(QPixmap(":/assets/dot.png"));
+    this->setScale(0.4);
+    this->setZValue(2);
+    this->pheromoneAnimation = new QPropertyAnimation(this, "lifeTime", this);
+    this->pheromoneAnimation->setStartValue(0);
+    this->pheromoneAnimation->setEndValue(5);
+    //this->xAnimation->setEasingCurve(QEasingCurve::InQuad);
+    this->pheromoneAnimation->setDuration(30000 * (evaporationRate+2));
+
+    connect(this->pheromoneAnimation,&QPropertyAnimation::finished,[=](){
+        //std::cout<<"food expired"<<std::endl;
+        scene()->removeItem(this);
+        delete this;
+    });
+    this->pheromoneAnimation->start();
+!!!136194.cpp!!!	collidePheromone() : bool
+
+    QList<QGraphicsItem*> collidingPheromone = this->collidingItems();
+
+    foreach (QGraphicsItem * item, collidingPheromone){
+        Warrior * collidingPheromoneItem = dynamic_cast<Warrior*>(item);
+        if(collidingPheromoneItem && collidingPheromoneItem->x() != x() && collidingPheromoneItem->y() != y()) {
+            return true;
+        }
+    }
+    return false;
+!!!136322.cpp!!!	lifeTime() : int
+
+    return m_lifeTime;
+!!!136450.cpp!!!	setLifeTime(in newLifeTime : int) : void
+
+    m_lifeTime = newLifeTime;
