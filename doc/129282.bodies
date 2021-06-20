@@ -1,0 +1,7 @@
+class Larva
+!!!134402.cpp!!!	lifeTime() : int
+
+    return m_lifeTime;
+!!!134530.cpp!!!	setLifeTime(in newLifeTime : int) : void
+
+    m_lifeTime = newLifeTime;

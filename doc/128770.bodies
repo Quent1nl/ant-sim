@@ -1,0 +1,7 @@
+class Egg
+!!!132866.cpp!!!	lifeTime() : int
+
+    return m_lifeTime;
+!!!132994.cpp!!!	setLifeTime(in newLifeTime : int) : void
+
+    m_lifeTime = newLifeTime;

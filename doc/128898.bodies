@@ -1,11 +1,6 @@
-#include "food.h"
+class Food
+!!!133122.cpp!!!	Food()
 
-
-
-
-Food::Food() :
-    centerElipse(new QGraphicsEllipseItem(50,50,40,40,this))
-{
     //centerElipse->setPen(Qt::NoPen);
     setPixmap(QPixmap(":/assets/food.png"));
     this->setZValue(2);
@@ -22,30 +17,22 @@ Food::Food() :
         delete this;
     });
     this->foodAnimation->start();
-}
+!!!133250.cpp!!!	~Food()
 
-Food::~Food(){
     //qDebug() << "Deleted food";
-}
+!!!133378.cpp!!!	lifeTime() : int
 
-int Food::lifeTime() const
-{
     return m_lifeTime;
-}
+!!!133506.cpp!!!	setLifeTime(in newLifeTime : int) : void
 
-void Food::setLifeTime(int newLifeTime)
-{
     if (collideWithAnt()){
         emit takeFood();
         scene()->removeItem(this);
         delete this;
     }
     m_lifeTime = newLifeTime;
-}
+!!!133762.cpp!!!	collideWithAnt() : bool
 
-
-bool Food::collideWithAnt()
-{
     QList<QGraphicsItem*> collidingAnt = this->centerElipse->collidingItems();
 
     foreach (QGraphicsItem * item, collidingAnt){
@@ -53,4 +40,3 @@ bool Food::collideWithAnt()
         if(antItem) return true;
     }
     return false;
-}

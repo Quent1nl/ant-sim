@@ -1,0 +1,12 @@
+window_sizes 1920 1017 527 1388 841 128
+
+diagrams
+  active  classdiagram_ref 128002 // ex
+    1388 841 77 A0-Landscape 36 0
+end
+show_stereotypes
+selected classdiagram_ref 128002 // ex
+open
+  classview_ref 128002 // ant-sim
+end
+end

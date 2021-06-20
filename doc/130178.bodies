@@ -1,0 +1,21 @@
+class Queen
+!!!136834.cpp!!!	setAnimationGroup() : void
+
+    QSequentialAnimationGroup *seqGroupe= new QSequentialAnimationGroup;
+
+    seqGroupe->addAnimation(this->rotationAnimation);
+    seqGroupe->addAnimation(this->group);
+
+    seqGroupe->start();
+
+    //std::cout<<"bx : "<<x()<<" y : "<<y()<<std::endl;
+    connect(seqGroupe,&QPropertyAnimation::finished,[=](){
+        //std::cout<<"egg: "<<this->newEgg<<std::endl;
+        //pond un oeuf tous les cinq déplacements
+        if (this->newEgg++ == 5){
+            this->newEgg = 0;
+            emit generateEgg();
+            moveAnt();
+        }
+        moveAnt();
+    });

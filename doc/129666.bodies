@@ -1,0 +1,4 @@
+class Scene
+!!!137090.cpp!!!	Scene(inout parent : QObject = nullptr)
+
+
